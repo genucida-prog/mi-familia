@@ -15,6 +15,7 @@ import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
+import android.webkit.ValueCallback
 import android.webkit.WebView
 import android.widget.FrameLayout
 import android.widget.Toast
@@ -66,6 +67,26 @@ class MainActivity : ComponentActivity() {
     private val backgroundLocationPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { /* Graceful degradation: without "all the time" the OS limits background fixes. */ }
+
+    // Photo picker: Android WebView ignores <input type="file">.click() unless
+    // the chrome client wires the system chooser and hands the URIs back.
+    private var filePathCallback: ValueCallback<Array<Uri>>? = null
+    private val fileChooserLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val cb = filePathCallback
+        filePathCallback = null
+        val uris: Array<Uri>? = if (result.resultCode == RESULT_OK) {
+            val data = result.data
+            val clip = data?.clipData
+            when {
+                clip != null -> Array(clip.itemCount) { clip.getItemAt(it).uri }
+                data?.data != null && data.data != Uri.EMPTY -> arrayOf(data.data!!)
+                else -> null
+            }
+        } else null
+        cb?.onReceiveValue(uris)
+    }
 
     /**
      * OS permission chain, one dialog at a time (Android forbids mixing them):
@@ -193,6 +214,26 @@ class MainActivity : ComponentActivity() {
                 callback: GeolocationPermissions.Callback
             ) {
                 callback.invoke(origin, hasLocationPermission(), false)
+            }
+
+            override fun onShowFileChooser(
+                view: WebView?,
+                callback: ValueCallback<Array<Uri>>?,
+                params: FileChooserParams?
+            ): Boolean {
+                filePathCallback?.onReceiveValue(null)
+                filePathCallback = callback
+                val intent = params?.createIntent()
+                    ?: Intent(Intent.ACTION_GET_CONTENT)
+                        .addCategory(Intent.CATEGORY_OPENABLE)
+                        .setType("image/*")
+                return try {
+                    fileChooserLauncher.launch(intent)
+                    true
+                } catch (e: ActivityNotFoundException) {
+                    filePathCallback = null
+                    false
+                }
             }
         }
 
