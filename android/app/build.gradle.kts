@@ -11,8 +11,8 @@ android {
         applicationId = "com.mifamilia.app"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
     }
 
     buildTypes {
@@ -55,4 +55,6 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.activity:activity-ktx:1.9.2")
     implementation("androidx.webkit:webkit:1.11.0")
+    // Background MQTT sync (SyncService): plain TCP against the public brokers.
+    implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
 }

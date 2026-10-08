@@ -1,4 +1,4 @@
-const CACHE = "mi-familia-v1";
+const CACHE = "mi-familia-v2";
 
 const PRECACHE = [
   "index.html",

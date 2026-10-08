@@ -6,6 +6,7 @@
   <meta name="color-scheme" content="light" />
   <title>Mi Familia — localización familiar</title>
   <meta name="theme-color" content="#0E7A66" />
+  <meta name="app-version" content="1.2.0" />
   <link rel="icon" type="image/svg+xml" href="icon.svg" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
@@ -397,6 +398,9 @@
       border-radius: var(--r-pill);
       padding: 2px 8px;
       white-space: nowrap;
+      max-width: 116px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .me { position: relative; display: block; width: 22px; height: 22px; }
     .me::before { content: ""; position: absolute; inset: -10px; border-radius: 50%; background: rgba(14, 122, 102, .16); }
@@ -408,6 +412,20 @@
       background: var(--c-primary);
       border: 3px solid var(--c-surface);
       box-shadow: 0 1px 4px rgba(18, 33, 30, .4);
+    }
+    .me-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 120px; }
+    .me-name {
+      font-size: 11px;
+      font-weight: 650;
+      color: var(--c-ink);
+      background: rgba(255, 255, 255, .95);
+      border: 1px solid var(--c-line);
+      border-radius: var(--r-pill);
+      padding: 2px 8px;
+      white-space: nowrap;
+      max-width: 116px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .geo-row { display: flex; align-items: center; gap: var(--sp-2); }
     .geo-out { font-size: 12px; line-height: 1.4; color: var(--c-ink-muted); }
@@ -490,6 +508,9 @@
       border-radius: var(--r-pill);
       padding: 2px 8px;
       white-space: nowrap;
+      max-width: 116px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .fab-sos {
@@ -1128,6 +1149,8 @@
     }
     .member-ava[data-id="carlos"] { background: var(--c-primary-deep); }
     .member-ava[data-id="leo"] { background: var(--c-alert); }
+    .pin-ava, .rail-ava, .lmk-ava, .member-ava, .profile-ava { overflow: hidden; }
+    .ava-img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
     .status-pill {
       display: inline-flex;
@@ -1474,6 +1497,35 @@
                   </div>
                 </div>
 
+                <div class="od-stack" style="gap:6px">
+                  <h2 class="section-title">Mi perfil</h2>
+                  <div class="card od-stack" style="gap:14px">
+                    <div class="od-row" style="align-items:center">
+                      <span class="member-ava" id="my-ava" aria-hidden="true">·</span>
+                      <div class="od-fill od-field">
+                        <span class="row-title">Nombre y foto</span>
+                        <span class="row-help">Lo verá tu familia en el mapa y en la actividad</span>
+                      </div>
+                    </div>
+                    <div class="od-field">
+                      <label class="field-label" for="my-name-input">Tu nombre</label>
+                      <input class="input" id="my-name-input" type="text" placeholder="Por ejemplo: Mamá" autocomplete="given-name" maxlength="28" />
+                    </div>
+                    <div class="od-field">
+                      <span class="field-label">Tu foto</span>
+                      <div class="od-row" style="gap:8px;margin-top:4px">
+                        <button type="button" class="btn btn-ghost" id="btn-ava-pick">
+                          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-user-plus"/></svg>
+                          Cambiar foto
+                        </button>
+                        <button type="button" class="btn btn-ghost" id="btn-ava-clear">Quitar foto</button>
+                        <input type="file" id="ava-file" accept="image/*" hidden />
+                      </div>
+                      <span class="row-help" id="my-ava-help">Sin foto se muestra tu inicial.</span>
+                    </div>
+                  </div>
+                </div>
+
                 <div class="banner" id="pause-banner" hidden>
                   <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-info"/></svg>
                   <span class="od-fill">Tu ubicación está pausada hasta las <span class="od-nowrap" id="pause-until">—</span>.</span>
@@ -1527,7 +1579,7 @@
                       <div class="sync-chip-row" role="group" aria-labelledby="sync-who-label">
                         <button type="button" class="sync-who" data-who="laura" aria-pressed="false">Mamá</button>
                         <button type="button" class="sync-who" data-who="carlos" aria-pressed="false">Papá</button>
-                        <button type="button" class="sync-who" data-who="leo" aria-pressed="false">Leo</button>
+                        <button type="button" class="sync-who" data-who="leo" aria-pressed="false">Hijo</button>
                       </div>
                       <span class="field-error" id="sync-who-error">Elige quién usa este dispositivo.</span>
                     </div>
@@ -1669,6 +1721,19 @@
                       <button type="button" class="icon-btn plain" id="btn-clear-history-2" aria-label="Borrar historial de actividad" style="color:var(--c-danger)">
                         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-trash"/></svg>
                       </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="od-stack" style="gap:6px">
+                  <h2 class="section-title">Aplicación</h2>
+                  <div class="card">
+                    <div class="row">
+                      <div class="od-fill od-field">
+                        <span class="row-title">Actualizar Mi Familia</span>
+                        <span class="row-help" id="update-status">Versión instalada: 1.2.0</span>
+                      </div>
+                      <button type="button" class="btn btn-ghost" id="btn-check-update" style="min-height:40px;font-size:14px">Comprobar</button>
                     </div>
                   </div>
                 </div>
@@ -1905,6 +1970,27 @@
         </div>
       </div>
 
+      <div class="overlay" id="ov-super-recv" data-lock hidden>
+        <div class="scrim" aria-hidden="true"></div>
+        <div class="dialog" role="alertdialog" aria-modal="true" aria-labelledby="super-recv-title" aria-describedby="super-recv-text">
+          <div class="od-row-top">
+            <span class="tl-icon out" aria-hidden="true">
+              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-bell"/></svg>
+            </span>
+            <div class="od-fill od-field">
+              <span class="dialog-title" id="super-recv-title">Superllamada recibida</span>
+            </div>
+          </div>
+          <p class="dialog-text" id="super-recv-text">La alarma sigue sonando a máximo volumen con vibración hasta que la pares, aunque el móvil esté en silencio.</p>
+          <div class="dialog-actions">
+            <button type="button" class="btn btn-danger" id="btn-super-recv-stop" style="min-height:56px;font-size:16px">
+              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-x"/></svg>
+              Parar alarma
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div class="overlay" id="ov-circle-name" hidden>
         <button type="button" class="scrim" data-dismiss aria-label="Cancelar"></button>
         <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="circle-name-title">
@@ -2078,6 +2164,76 @@
         return c ? ' style="background:' + c + '"' : "";
       }
 
+      /* ===== Mi perfil: nombre + foto sincronizados con la familia ===== */
+      var profile = { name: "", avatar: "" };
+      var remoteProfiles = {};
+
+      function saveProfile() {
+        try { localStorage.setItem("nexo-profile", JSON.stringify(profile)); } catch (e) { /* sin storage */ }
+      }
+
+      function cleanName(s) {
+        return String(s == null ? "" : s).replace(/[<>"']/g, "").trim().slice(0, 28);
+      }
+
+      function cleanAvatar(s) {
+        s = String(s == null ? "" : s);
+        return (/^data:image\/(jpeg|png|webp);base64,/.test(s) && s.length <= 48000) ? s : "";
+      }
+
+      function selfName() {
+        if (profile.name) return profile.name;
+        var m = syncById(sync.identity);
+        if (m) return m.name;
+        return whoName(sync.identity, "Tú");
+      }
+
+      function avaInner(m) {
+        var rp = remoteProfiles[m.id];
+        var av = (rp && rp.avatar) || m.avatar || "";
+        if (av) return '<img class="ava-img" src="' + av + '" alt="" />';
+        return m.initial || "?";
+      }
+
+      function applyProfileUi() {
+        var av = $("#my-ava");
+        if (av) {
+          av.innerHTML = profile.avatar
+            ? '<img class="ava-img" src="' + profile.avatar + '" alt="" />'
+            : (cleanName(selfName()).charAt(0) || "·").toUpperCase();
+        }
+        var inp = $("#my-name-input");
+        if (inp && document.activeElement !== inp) inp.value = profile.name;
+        var mapName = document.querySelector(".me-name");
+        if (mapName) mapName.textContent = selfName();
+        var help = $("#my-ava-help");
+        if (help) {
+          help.textContent = profile.avatar
+            ? "Tu foto se verá en el mapa y en la actividad de tu familia."
+            : "Sin foto se muestra tu inicial.";
+        }
+      }
+
+      function compressAvatar(file, cb) {
+        var url = URL.createObjectURL(file);
+        var img = new Image();
+        function done(out) { try { URL.revokeObjectURL(url); } catch (e) { /* sin blob */ } cb(out); }
+        img.onload = function () {
+          try {
+            var S = 160;
+            var side = Math.min(img.width, img.height);
+            var c = document.createElement("canvas");
+            c.width = S;
+            c.height = S;
+            var g = c.getContext("2d");
+            g.drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, S, S);
+            done(c.toDataURL("image/jpeg", 0.72));
+          } catch (e) { done(""); }
+        };
+        img.onerror = function () { done(""); };
+        img.src = url;
+      }
+
       var screenMeta = {
         mapa: { title: "Mi Familia", sub: "Sin miembros compartiendo ubicación" },
         lugares: { title: "Lugares", sub: "Alertas de llegada y salida" },
@@ -2102,6 +2258,25 @@
 
       function icon(id, cls) {
         return '<svg class="' + (cls || "ic") + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#' + id + '"/></svg>';
+      }
+
+      /* ===== Avisos del sistema (solo donde el navegador los permite) ===== */
+      function notifyMe(title, body) {
+        try {
+          if (typeof Notification === "undefined") return;
+          if (Notification.permission !== "granted") return;
+          new Notification(title, { body: body, tag: "mifamilia-" + title });
+        } catch (e) { /* sin notificaciones */ }
+      }
+
+      function askNotify() {
+        try {
+          if (typeof Notification === "undefined") return;
+          if (Notification.permission === "default" && Notification.requestPermission) {
+            var p = Notification.requestPermission();
+            if (p && p.then) p.catch(function () { /* denegado */ });
+          }
+        } catch (e) { /* sin notificaciones */ }
       }
 
       /* ===== Overlay controller (focus management) ===== */
@@ -2145,7 +2320,10 @@
 
       document.addEventListener("keydown", function (e) {
         if (!activeOverlay) return;
-        if (e.key === "Escape") { e.preventDefault(); closeOverlay(activeOverlay); return; }
+        if (e.key === "Escape") {
+          if (activeOverlay.hasAttribute("data-lock")) return;
+          e.preventDefault(); closeOverlay(activeOverlay); return;
+        }
         if (e.key === "Tab") {
           var f = focusables(activeOverlay);
           if (!f.length) return;
@@ -2210,8 +2388,8 @@
         var pins = members.map(function (m) {
           return '<button type="button" class="pin" data-id="' + m.id + '" style="left:' + m.x + '%;top:' + m.y + '%" ' +
             'aria-label="Ver detalle de ' + m.name + ', ' + m.status + '">' +
-            '<span class="pin-ava"' + avaCol(m.id) + ' aria-hidden="true">' + m.initial + '</span>' +
-            '<span class="pin-name">' + m.tag + '</span></button>';
+            '<span class="pin-ava"' + avaCol(m.id) + ' aria-hidden="true">' + avaInner(m) + '</span>' +
+            '<span class="pin-name">' + m.name + '</span></button>';
         }).join("");
         $("#pins").innerHTML = pins;
 
@@ -2222,7 +2400,7 @@
           $("#member-rail").innerHTML = members.map(function (m) {
             return '<button type="button" class="rail-chip" data-id="' + m.id + '" role="listitem" ' +
               'aria-label="Ver detalle de ' + m.name + ', ' + m.status + '">' +
-              '<span class="rail-ava"' + avaCol(m.id) + ' aria-hidden="true">' + m.initial + '</span>' +
+              '<span class="rail-ava"' + avaCol(m.id) + ' aria-hidden="true">' + avaInner(m) + '</span>' +
               '<span class="od-field"><span class="rail-name">' + m.name + '</span>' +
               '<span class="rail-status">' + m.status + '</span></span></button>';
           }).join("");
@@ -2235,7 +2413,15 @@
         var m = members.filter(function (x) { return x.id === id; })[0];
         if (!m) return;
         currentMember = m;
-        $("#member-ava").textContent = m.initial;
+        if (map && typeof m.lat === "number" && !isNaN(m.lat)) {
+          try {
+            var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            var flyZoom = Math.max(map.getZoom() || 14, 16);
+            if (reduceMotion || typeof map.flyTo !== "function") map.setView([m.lat, m.lng], flyZoom);
+            else map.flyTo([m.lat, m.lng], flyZoom, { duration: 0.7 });
+          } catch (e) { /* sin mapa */ }
+        }
+        $("#member-ava").innerHTML = avaInner(m);
         $("#member-ava").dataset.id = m.id;
         $("#member-ava").style.background = memberColor(m.id) || "";
         $$(".swatch").forEach(function (sw) {
@@ -2447,6 +2633,7 @@
         b.addEventListener("click", function () {
           superDur = parseInt(b.dataset.dur, 10);
           $$("[data-dur]").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+          nativeSetConfig();
           toast("Alarma de " + superDurLabel() + " en avisos y pruebas");
         });
       });
@@ -2455,6 +2642,56 @@
         superAlarmStart(superDur * 1000, "Prueba de superllamada finalizada");
         toast("Superllamada de prueba: " + superTone + " a máximo volumen durante " + superDurLabel());
       });
+
+      function nativeRunning() {
+        try { return !!(window.NexoNative && NexoNative.isServiceRunning && NexoNative.isServiceRunning()); }
+        catch (e) { return false; }
+      }
+
+      function nativeStopSuper() {
+        try {
+          if (window.NexoNative && NexoNative.stopSuper) NexoNative.stopSuper();
+        } catch (e) { /* sin puente */ }
+      }
+
+      $("#btn-super-recv-stop").addEventListener("click", function () {
+        superAlarmStop();
+        nativeStopSuper();
+        closeOverlay($("#ov-super-recv"));
+        toast("Alarma detenida");
+      });
+
+      function prefOn(name) {
+        var el = document.querySelector('[data-pref="' + name + '"]');
+        return !el || !!el.checked;
+      }
+
+      /* Configura (o detiene) el servicio nativo que sigue el MQTT con la app cerrada. */
+      function nativeSetConfig() {
+        try {
+          if (!window.NexoNative || !NexoNative.configure) return;
+          NexoNative.configure(JSON.stringify({
+            room: sync.room || "",
+            identity: sync.identity || "",
+            name: selfName(),
+            avatar: profile.avatar || "",
+            device: sync.device,
+            superOn: prefOn("superllamada"),
+            superDurSec: superDur,
+            notifLlegadas: prefOn("llegadas"),
+            notifSos: prefOn("sos-avisos"),
+            places: places,
+            placesTs: sync.placesTs
+          }));
+        } catch (e) { /* sin puente */ }
+      }
+
+      function nativeSetPlaces() {
+        try {
+          if (!window.NexoNative || !NexoNative.setPlaces) return;
+          NexoNative.setPlaces(JSON.stringify({ places: places, ts: sync.placesTs }));
+        } catch (e) { /* sin puente */ }
+      }
 
       /* ===== SOS ===== */
       var sosTimer = null;
@@ -2558,6 +2795,7 @@
                 '<span class="place-name">' + p.name + '</span>' +
                 '<span class="place-addr od-truncate">' + p.addr + '</span>' +
               '</div>' +
+              '<button type="button" class="icon-btn plain" data-edit="' + p.id + '" aria-label="Editar ' + p.name + '">' + icon("i-edit") + '</button>' +
               '<button type="button" class="icon-btn plain" data-del="' + p.id + '" aria-label="Eliminar ' + p.name + '" style="color:var(--c-danger)">' + icon("i-trash") + '</button>' +
             '</div>' +
             '<div class="place-meta">' +
@@ -2592,7 +2830,10 @@
       });
 
       var pendingDelete = null;
+      var editingPlaceId = null;
       $("#places-list").addEventListener("click", function (e) {
+        var eb = e.target.closest("[data-edit]");
+        if (eb) { openEditPlace(eb.dataset.edit, eb); return; }
         var b = e.target.closest("[data-del]");
         if (!b) return;
         pendingDelete = b.dataset.del;
@@ -2613,6 +2854,9 @@
       });
 
       function openAddPlace(opener) {
+        editingPlaceId = null;
+        $("#add-place-title").textContent = "Añadir lugar";
+        $("#btn-save-place").textContent = "Guardar lugar";
         $("#place-form").reset();
         $("#radius-out").textContent = "200 m";
         $("#place-name").setAttribute("aria-invalid", "false");
@@ -2623,6 +2867,26 @@
 
       $("#btn-add-place").addEventListener("click", function () { openAddPlace(this); });
       $("#btn-add-top").addEventListener("click", function () { openAddPlace(this); });
+
+      function openEditPlace(id, opener) {
+        var p = places.filter(function (x) { return x.id === id; })[0];
+        if (!p) return;
+        editingPlaceId = id;
+        $("#add-place-title").textContent = "Editar lugar";
+        $("#btn-save-place").textContent = "Guardar cambios";
+        $("#place-form").reset();
+        $("#place-name").value = p.name;
+        $("#place-addr").value = p.addr === "Dirección sin especificar" ? "" : p.addr;
+        $("#place-radius").value = p.radius;
+        $("#radius-out").textContent = p.radius + " m";
+        var typeRadio = document.querySelector('input[name="place-type"][value="' + (p.type || "Otro") + '"]');
+        if (typeRadio) typeRadio.checked = true;
+        $("#place-alerts").checked = !!p.alerts;
+        $("#place-name").setAttribute("aria-invalid", "false");
+        $("#place-name-error").classList.remove("show");
+        resetGeocode();
+        openOverlay("ov-add-place", opener);
+      }
 
       $("#place-radius").addEventListener("input", function () {
         $("#radius-out").textContent = this.value + " m";
@@ -2657,26 +2921,44 @@
         var radius = parseInt($("#place-radius").value, 10);
         var type = (document.querySelector('input[name="place-type"]:checked') || {}).value || "Otro";
         var alerts = $("#place-alerts").checked;
-        var coords = pendingGeo || myPos || null;
+        var existing = editingPlaceId
+          ? places.filter(function (x) { return x.id === editingPlaceId; })[0]
+          : null;
+        var coords = pendingGeo ||
+          (existing && existing.lat != null ? { lat: existing.lat, lng: existing.lng } : null) ||
+          (existing ? null : myPos) ||
+          null;
         setTimeout(function () {
-          places.push({
-            id: "p" + (Date.now()),
-            name: name,
-            addr: addr,
-            radius: radius,
-            alerts: alerts,
-            who: "Tú eliges",
-            type: type,
-            lat: coords ? coords.lat : null,
-            lng: coords ? coords.lng : null
-          });
+          if (existing) {
+            existing.name = name;
+            existing.addr = addr;
+            existing.radius = radius;
+            existing.type = type;
+            existing.alerts = alerts;
+            if (coords) { existing.lat = coords.lat; existing.lng = coords.lng; }
+          } else {
+            places.push({
+              id: "p" + (Date.now()),
+              name: name,
+              addr: addr,
+              radius: radius,
+              alerts: alerts,
+              who: "Tú eliges",
+              type: type,
+              lat: coords ? coords.lat : null,
+              lng: coords ? coords.lng : null
+            });
+          }
+          var wasEdit = !!existing;
+          editingPlaceId = null;
           btn.disabled = false;
           btn.textContent = "Guardar lugar";
+          $("#add-place-title").textContent = "Añadir lugar";
           closeOverlay($("#ov-add-place"));
           renderPlaces();
           savePlaces();
           publishPlaces();
-          toast("Lugar añadido: " + name);
+          toast(wasEdit ? "Lugar actualizado: " + name : "Lugar añadido: " + name);
         }, 550);
       });
 
@@ -2855,12 +3137,88 @@
           var row = input.closest(".row");
           var title = row ? row.querySelector(".row-title").textContent : "Preferencia";
           toast(title + ": " + (input.checked ? "activada" : "desactivada"));
+          if (input.checked && (input.dataset.pref === "llegadas" || input.dataset.pref === "sos-avisos")) askNotify();
+          nativeSetConfig();
         });
+      });
+
+      var myNameInput = $("#my-name-input");
+      myNameInput.addEventListener("input", function () {
+        profile.name = cleanName(this.value);
+        saveProfile();
+        applyProfileUi();
+      });
+      myNameInput.addEventListener("change", function () {
+        this.value = profile.name;
+        publishProfile();
+        nativeSetConfig();
+        if (profile.name) toast("Tu nombre: " + profile.name);
+      });
+      $("#btn-ava-pick").addEventListener("click", function () { $("#ava-file").click(); });
+      $("#ava-file").addEventListener("change", function () {
+        var f = this.files && this.files[0];
+        this.value = "";
+        if (!f) return;
+        compressAvatar(f, function (out) {
+          if (!out) { toast("No se pudo leer la imagen"); return; }
+          profile.avatar = out;
+          saveProfile();
+          applyProfileUi();
+          publishProfile();
+          nativeSetConfig();
+          toast("Foto de perfil actualizada");
+        });
+      });
+      $("#btn-ava-clear").addEventListener("click", function () {
+        if (!profile.avatar) { toast("No hay foto que quitar"); return; }
+        profile.avatar = "";
+        saveProfile();
+        applyProfileUi();
+        publishProfile();
+        nativeSetConfig();
+        toast("Foto de perfil quitada");
       });
 
       $("#btn-invite").addEventListener("click", function () {
         toast("Enlace de invitación listo para compartir");
       });
+
+      function checkAppUpdate(manual) {
+        var status = $("#update-status");
+        var btn = $("#btn-check-update");
+        var vm = document.querySelector('meta[name="app-version"]');
+        var local = vm ? vm.getAttribute("content") : "";
+        if (btn) btn.disabled = true;
+        if (manual && status) status.textContent = "Comprobando…";
+        var url = location.pathname + (location.search ? "&" : "?") + "aw=" + Date.now();
+        fetch(url, { cache: "no-store" })
+          .then(function (r) { return r.ok ? r.text() : Promise.reject(); })
+          .then(function (html) {
+            if (btn) btn.disabled = false;
+            var mt = html.match(/<meta\s+name=["']app-version["']\s+content=["']([^"']+)["']/);
+            var remote = mt ? mt[1] : "";
+            if (remote && local && remote === local) {
+              if (status) status.textContent = "La app está actualizada (versión " + local + ")";
+            } else if (remote && local) {
+              if (status) status.textContent = "Versión nueva encontrada. Actualizando…";
+              setTimeout(function () { location.reload(); }, 900);
+            } else if (manual && status) {
+              status.textContent = "No se encontró información de versión.";
+            }
+          })
+          .catch(function () {
+            if (btn) btn.disabled = false;
+            if (manual && status) status.textContent = "Sin conexión: no se pudo comprobar ahora.";
+          });
+      }
+      if ($("#btn-check-update")) {
+        var installMeta = document.querySelector('meta[name="app-version"]');
+        if (installMeta && $("#update-status")) {
+          $("#update-status").textContent = "Versión instalada: " + installMeta.getAttribute("content");
+        }
+        $("#btn-check-update").addEventListener("click", function () { checkAppUpdate(true); });
+        checkAppUpdate(false);
+      }
 
       $("#btn-pause").addEventListener("click", function () {
         var until = new Date(Date.now() + 60 * 60 * 1000);
@@ -2879,7 +3237,7 @@
       /* ===== Sincronización: broker MQTT público + código de sala ===== */
       var MQTT_BROKERS = ["wss://broker.emqx.io:8084/mqtt", "wss://broker.hivemq.com:8884/mqtt"];
       var SYNC_PREFIX = "nexo-familiar";
-      var whoNames = { laura: "Mamá", carlos: "Papá", leo: "Leo" };
+      var whoNames = { laura: "Mamá", carlos: "Papá", leo: "Hijo" };
       function whoName(id, fallback) {
         return whoNames[id] || fallback || "Familia";
       }
@@ -2963,12 +3321,15 @@
         return {
           pos: SYNC_PREFIX + "/" + sync.room + "/pos",
           evt: SYNC_PREFIX + "/" + sync.room + "/evt",
-          places: SYNC_PREFIX + "/" + sync.room + "/places"
+          places: SYNC_PREFIX + "/" + sync.room + "/places",
+          profile: SYNC_PREFIX + "/" + sync.room + "/profile"
         };
       }
 
       function publishPlaces() {
         sync.placesTs = Date.now();
+        try { localStorage.setItem("nexo-places-ts", String(sync.placesTs)); } catch (e) { /* sin storage */ }
+        nativeSetPlaces();
         if (sync.state !== "on" || !sync.client || !sync.identity) return;
         var payload = JSON.stringify({
           v: 1,
@@ -2984,13 +3345,13 @@
       function publishPos() {
         if (sync.state !== "on" || !sync.client || !sync.identity || !myPos) return;
         var m = syncById(sync.identity);
-        var label = m ? m.name : whoName(sync.identity);
+        var label = selfName();
         var payload = JSON.stringify({
           v: 1,
           device: sync.device,
           id: sync.identity,
           name: label,
-          initial: m ? m.initial : label.charAt(0).toUpperCase(),
+          initial: (label.charAt(0) || "?").toUpperCase(),
           lat: myPos.lat,
           lng: myPos.lng,
           batt: m && m.batt != null ? m.batt : null,
@@ -3003,12 +3364,11 @@
 
       function publishEvt(kind, placeName, toId) {
         if (sync.state !== "on" || !sync.client || !sync.identity) return;
-        var m = syncById(sync.identity);
         var payload = JSON.stringify({
           v: 1,
           device: sync.device,
           id: sync.identity,
-          name: m ? m.name : whoName(sync.identity),
+          name: selfName(),
           kind: kind,
           place: placeName,
           to: toId || null,
@@ -3018,6 +3378,21 @@
         });
         try {
           sync.client.publish(syncTopics().evt, payload, { qos: 1 });
+        } catch (e) { /* sin conexión */ }
+      }
+
+      function publishProfile() {
+        if (sync.state !== "on" || !sync.client || !sync.identity) return;
+        var payload = JSON.stringify({
+          v: 1,
+          device: sync.device,
+          id: sync.identity,
+          name: selfName(),
+          avatar: profile.avatar || "",
+          ts: Date.now()
+        });
+        try {
+          sync.client.publish(syncTopics().profile + "/" + sync.identity, payload, { qos: 1, retain: true });
         } catch (e) { /* sin conexión */ }
       }
 
@@ -3042,8 +3417,7 @@
           var prev = sync.fences[p.id];
           sync.fences[p.id] = inside;
           if (prev === undefined || prev === inside) return;
-          var m = syncById(sync.identity);
-          var who = m ? m.name : whoName(sync.identity, "Alguien");
+          var who = selfName();
           var kind = inside ? "llegada" : "salida";
           var main = who + (inside ? " llegó a " : " salió de ") + p.name;
           addActivityItem({ day: "Hoy", kind: kind, main: main, meta: "Hoy · " + hhmmNow() }, false);
@@ -3063,13 +3437,15 @@
           var m = syncById(data.id);
           var fresh = false;
           if (!m) {
+            var rp0 = remoteProfiles[data.id];
             var label = whoName(data.id, data.name);
-            var who = data.name || label;
+            var who = cleanName((rp0 && rp0.name) || data.name) || label;
             m = {
               id: data.id,
               name: who,
               real: who,
-              initial: data.initial || who.charAt(0).toUpperCase(),
+              initial: (cleanName(data.initial || who.charAt(0)) || "?").charAt(0),
+              avatar: (rp0 && rp0.avatar) || null,
               status: "Compartiendo ubicación",
               place: "",
               batt: typeof data.batt === "number" ? data.batt : null,
@@ -3086,6 +3462,9 @@
             fresh = true;
           }
           sync.seenPos[data.id] = Date.now();
+          var rp = remoteProfiles[data.id];
+          if (rp && rp.name) { m.name = rp.name; m.real = rp.name; }
+          m.avatar = rp ? (rp.avatar || null) : (m.avatar || null);
           m.lat = data.lat;
           m.lng = data.lng;
           m.upd = "ahora";
@@ -3096,16 +3475,34 @@
           if (fresh) toast(who + " está compartiendo su ubicación");
         } else if (parts[2] === "places") {
           if (typeof data.ts !== "number" || data.ts <= sync.placesTs) return;
-          if (!data.places || !data.places.length) return;
+          if (!Array.isArray(data.places)) return;
           var clean = data.places.filter(function (x) { return x && x.id && x.name; });
-          if (!clean.length) return;
+          if (data.places.length && !clean.length) return;
           var firstSync = sync.maxSeenTs === 0;
           sync.maxSeenTs = data.ts;
           sync.placesTs = data.ts;
+          try { localStorage.setItem("nexo-places-ts", String(data.ts)); } catch (e) { /* sin storage */ }
           places = clean;
           renderPlaces();
           savePlaces();
+          nativeSetPlaces();
           if (!firstSync) toast("Lugares actualizados desde la familia");
+        } else if (parts[2] === "profile") {
+          if (!data.id || data.id === sync.identity) return;
+          var pn = cleanName(data.name || "");
+          var pa = cleanAvatar(data.avatar || "");
+          remoteProfiles[data.id] = { name: pn, avatar: pa };
+          var pm = syncById(data.id);
+          if (pm) {
+            if (pn) { pm.name = pn; pm.real = pn; }
+            pm.avatar = pa || null;
+            renderMembers();
+            if (currentMember && currentMember.id === pm.id && activeOverlay && activeOverlay.id === "ov-member") {
+              $("#member-ava").innerHTML = avaInner(pm);
+              $("#member-name").textContent = pm.name;
+              $("#member-real").textContent = pm.real;
+            }
+          }
         } else if (parts[2] === "evt") {
           if (!data.kind || !data.place || !data.name) return;
           var bucket = Math.floor((data.ts || 0) / 60000);
@@ -3114,9 +3511,13 @@
           sync.seenEvt[key] = true;
           if (data.kind === "super") {
             if (data.to && data.to !== sync.identity) return;
+            notifyMe("Superllamada de " + data.name, "Abre Mi Familia para parar la alarma.");
             if (superPrefOn() && !sosTimer) {
               toast("Superllamada de " + data.name + ": sonando");
-              superAlarmStart(superDur * 1000, "Superllamada finalizada");
+              $("#super-recv-title").textContent = "Superllamada de " + data.name;
+              if (!nativeRunning()) superAlarmStart(0);
+              if (activeOverlay && activeOverlay.id !== "ov-super-recv") closeOverlay(activeOverlay);
+              openOverlay("ov-super-recv");
             } else {
               toast("Superllamada de " + data.name);
             }
@@ -3137,6 +3538,7 @@
               meta: "Hoy · " + hhmmNow()
             }, avisaSos);
             if (!avisaSos) return;
+            notifyMe("SOS de " + data.name, "Su ubicación está en vivo en el mapa. Si es una emergencia real, avisa al 112.");
             $("#sos-remote-title").textContent = data.name + " activó un SOS";
             var sosTxt = "Su ubicación está en vivo en el mapa. Si es una emergencia real, avisa al 112.";
             if (sosLL && myPos) {
@@ -3152,12 +3554,15 @@
             openOverlay("ov-sos-remote");
             return;
           }
+          var mainEvt = data.name + (data.kind === "salida" ? " salió de " : " llegó a ") + data.place;
           addActivityItem({
             day: "Hoy",
             kind: data.kind === "salida" ? "salida" : "llegada",
-            main: data.name + (data.kind === "salida" ? " salió de " : " llegó a ") + data.place,
+            main: mainEvt,
             meta: "Hoy · " + hhmmNow()
           }, true);
+          var llegadasToggle = $('[data-pref="llegadas"]');
+          if (!llegadasToggle || llegadasToggle.checked) notifyMe("Mi Familia", mainEvt);
         }
       }
 
@@ -3178,6 +3583,7 @@
         sync.manualEnd = false;
         sync.everConnected = false;
         sync.seenPos = {};
+        remoteProfiles = {};
         sync.maxSeenTs = 0;
         sync.online = 0;
       }
@@ -3225,9 +3631,12 @@
             c.subscribe(t.pos + "/#", { qos: 1 });
             c.subscribe(t.evt, { qos: 1 });
             c.subscribe(t.places, { qos: 1 });
+            c.subscribe(t.profile + "/#", { qos: 1 });
           } catch (e) { /* sin conexión */ }
           setSyncState("on", "Posiciones y actividad en vivo con tu familia");
           publishPos();
+          publishProfile();
+          nativeSetConfig();
           clearInterval(sync.posTimer);
           sync.posTimer = setInterval(publishPos, 15000);
           clearInterval(sync.countTimer);
@@ -3297,6 +3706,7 @@
           });
           $("#sync-who-error").classList.remove("show");
           saveSync();
+          applyProfileUi();
         });
       });
 
@@ -3305,7 +3715,9 @@
         sync.room = genRoomCode();
         $("#sync-code-input").value = sync.room;
         saveSync();
+        askNotify();
         syncConnect();
+        nativeSetConfig();
       });
 
       var codeInput = $("#sync-code-input");
@@ -3333,7 +3745,9 @@
         if (!code) { codeInput.focus(); return; }
         sync.room = code;
         saveSync();
+        askNotify();
         syncConnect();
+        nativeSetConfig();
       });
 
       $("#btn-sync-copy").addEventListener("click", function () {
@@ -3380,6 +3794,7 @@
         try { localStorage.removeItem("nexo-sync"); } catch (e) { /* sin storage */ }
         $("#sync-code-input").value = "";
         setSyncState("off", "Sin sincronizar: la app solo muestra datos de este dispositivo");
+        nativeSetConfig();
         toast("Has salido de la sala");
       });
 
@@ -3537,8 +3952,8 @@
             icon: L.divIcon({
               className: "lmk-i",
               html: '<span class="lmk" data-id="' + m.id + '">' +
-                '<span class="lmk-ava"' + avaCol(m.id) + '>' + m.initial + '</span>' +
-                '<span class="lmk-name">' + m.tag + '</span></span>',
+                '<span class="lmk-ava"' + avaCol(m.id) + '>' + avaInner(m) + '</span>' +
+                '<span class="lmk-name">' + m.name + '</span></span>',
               iconSize: [56, 70],
               iconAnchor: [28, 35]
             }),
@@ -3554,9 +3969,9 @@
           meMarker = L.marker([myPos.lat, myPos.lng], {
             icon: L.divIcon({
               className: "me-i",
-              html: '<span class="me"></span>',
-              iconSize: [22, 22],
-              iconAnchor: [11, 11]
+              html: '<span class="me-wrap"><span class="me"></span><span class="me-name">' + selfName() + '</span></span>',
+              iconSize: [120, 48],
+              iconAnchor: [60, 11]
             }),
             title: "Tu ubicación",
             keyboard: true,
@@ -3620,9 +4035,7 @@
         if (!isFinite(avg) || avg < 0) avg = 0;
         var fromName = nearPlaceName(d.startLL) || "Origen";
         var toName = nearPlaceName(d.lastLL) || "Destino";
-        var who = whoName(sync.identity, "Tú");
-        var m = syncById(sync.identity);
-        if (m) who = m.name;
+        var who = selfName();
         var d0 = new Date(d.startTs);
         var time0 = String(d0.getHours()).padStart(2, "0") + ":" + String(d0.getMinutes()).padStart(2, "0");
         trips.unshift({
@@ -3812,8 +4225,19 @@
         if (Array.isArray(savedPlaces)) places = savedPlaces;
       } catch (e) { /* sin storage */ }
       try {
+        var savedPlacesTs = parseInt(localStorage.getItem("nexo-places-ts") || "0", 10);
+        if (isFinite(savedPlacesTs) && savedPlacesTs > 0) sync.placesTs = savedPlacesTs;
+      } catch (e) { /* sin storage */ }
+      try {
         var savedTrips = JSON.parse(localStorage.getItem("nexo-trips") || "[]");
         if (Array.isArray(savedTrips)) trips = savedTrips;
+      } catch (e) { /* sin storage */ }
+      try {
+        var savedProfile = JSON.parse(localStorage.getItem("nexo-profile") || "null");
+        if (savedProfile && typeof savedProfile === "object") {
+          profile.name = cleanName(savedProfile.name || "");
+          profile.avatar = cleanAvatar(savedProfile.avatar || "");
+        }
       } catch (e) { /* sin storage */ }
       initRealMap();
       renderMembers();
@@ -3821,6 +4245,8 @@
       renderTrips();
       initGps();
       initSync();
+      applyProfileUi();
+      nativeSetConfig();
       setScreen("mapa");
     })();
   </script>

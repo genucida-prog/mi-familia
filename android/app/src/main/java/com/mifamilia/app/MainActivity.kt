@@ -6,9 +6,11 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.ViewGroup
 import android.webkit.GeolocationPermissions
+import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -23,6 +25,7 @@ import androidx.core.content.ContextCompat
 import androidx.webkit.WebResourceErrorCompat
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewClientCompat
+import org.json.JSONObject
 
 /**
  * Hosts Mi Familia in a WebView.
@@ -54,7 +57,37 @@ class MainActivity : ComponentActivity() {
 
     private val locationPermissions = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
-    ) { /* [hasLocationPermission] is re-checked whenever the page asks. */ }
+    ) { requestNotificationPermission() }
+
+    private val notificationPermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { requestBackgroundLocation() }
+
+    private val backgroundLocationPermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { /* Graceful degradation: without "all the time" the OS limits background fixes. */ }
+
+    /**
+     * OS permission chain, one dialog at a time (Android forbids mixing them):
+     * fine/coarse → notifications (33+) → background location (29+).
+     */
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= 33 &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
+            notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            requestBackgroundLocation()
+        }
+    }
+
+    private fun requestBackgroundLocation() {
+        if (Build.VERSION.SDK_INT >= 29 &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED
+        ) {
+            backgroundLocationPermission.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+        }
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,6 +107,11 @@ class MainActivity : ComponentActivity() {
             overScrollMode = WebView.OVER_SCROLL_NEVER
         }
         setContentView(webView)
+
+        // The page drives the background sync service (SyncService) through
+        // this bridge: room/identity/profile config, shared places and the
+        // super-call alarm stop button.
+        webView.addJavascriptInterface(NexoBridge(), "NexoNative")
 
         webView.settings.apply {
             javaScriptEnabled = true
@@ -171,6 +209,8 @@ class MainActivity : ComponentActivity() {
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 )
             )
+        } else {
+            requestNotificationPermission()
         }
 
         webView.loadUrl(if (migrated()) REMOTE_URL else LOCAL_URL)
@@ -224,6 +264,64 @@ class MainActivity : ComponentActivity() {
         } catch (e: ActivityNotFoundException) {
             Toast.makeText(this, R.string.no_app_for_link, Toast.LENGTH_SHORT).show()
             true
+        }
+    }
+
+    /**
+     * Exposed to the page as `window.NexoNative`. Every call is a plain
+     * string/primitive bridge: [SyncService] owns its own MQTT connection and
+     * only needs configuration, shared places and alarm control from the web
+     * layer. The configure payload also carries the places list so a cold
+     * start is a single atomic dispatch.
+     */
+    private inner class NexoBridge {
+
+        @JavascriptInterface
+        fun isServiceRunning(): Boolean = SyncService.active
+
+        @JavascriptInterface
+        fun configure(json: String) {
+            val hasRoom = try {
+                JSONObject(json).optString("room").isNotEmpty()
+            } catch (e: Exception) {
+                false
+            }
+            // Stopping a service that never ran is a no-op.
+            if (!hasRoom && !SyncService.active) return
+            dispatch(SyncService.ACTION_CONFIGURE, json)
+        }
+
+        @JavascriptInterface
+        fun setPlaces(json: String) {
+            if (!SyncService.active) return
+            dispatch(SyncService.ACTION_SET_PLACES, json)
+        }
+
+        @JavascriptInterface
+        fun ringSuper() {
+            if (!SyncService.active) return
+            dispatch(SyncService.ACTION_RING_SUPER, "")
+        }
+
+        @JavascriptInterface
+        fun stopSuper() {
+            if (!SyncService.active) return
+            dispatch(SyncService.ACTION_STOP_SUPER, "")
+        }
+
+        private fun dispatch(action: String, json: String) {
+            val intent = Intent(this@MainActivity, SyncService::class.java).setAction(action)
+            if (json.isNotEmpty()) intent.putExtra(SyncService.EXTRA_JSON, json)
+            try {
+                if (action == SyncService.ACTION_CONFIGURE && !SyncService.active) {
+                    ContextCompat.startForegroundService(this@MainActivity, intent)
+                } else {
+                    startService(intent)
+                }
+            } catch (e: Exception) {
+                // Background-start restrictions: the page retries on its next
+                // foreground visit anyway.
+            }
         }
     }
 
