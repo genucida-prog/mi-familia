@@ -5,14 +5,16 @@ plugins {
 
 android {
     namespace = "com.mifamilia.app"
-    compileSdk = 34
+    // 36: Health Connect 1.1.0 (pasos) exige compileSdk 36.
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.mifamilia.app"
-        minSdk = 24
+        // Health Connect (pasos) exige API 26; Android 8+ cubre casi todo el parque.
+        minSdk = 26
         targetSdk = 34
-    versionCode = 3
-    versionName = "1.2"
+    versionCode = 4
+    versionName = "1.3"
     }
 
     buildTypes {
@@ -57,4 +59,6 @@ dependencies {
     implementation("androidx.webkit:webkit:1.11.0")
     // Background MQTT sync (SyncService): plain TCP against the public brokers.
     implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
+    // Health Connect: pasos de "hoy" para la pantalla Conducción (s-healthy degrade).
+    implementation("androidx.health.connect:connect-client:1.1.0")
 }

@@ -2,6 +2,7 @@ package com.mifamilia.app
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -85,6 +86,9 @@ class SyncService : Service() {
     private var seenRemotePlacesTs = 0L
     private val fences = HashMap<String, Boolean>()
     private val seenEvt = LinkedHashSet<String>()
+    private var remSeenTs = 0L
+    private val scheduledRem = HashMap<String, PendingIntent>()
+    private val remDue = HashMap<String, Long>()
 
     private var lastLat = Double.NaN
     private var lastLng = Double.NaN
@@ -123,6 +127,17 @@ class SyncService : Service() {
         notifSos = prefs.getBoolean(KEY_NOTIF_SOS, true)
         places = try { JSONArray(prefs.getString(KEY_PLACES, "[]") ?: "[]") } catch (e: Exception) { JSONArray() }
         placesTs = prefs.getLong(KEY_PLACES_TS, 0L)
+        remSeenTs = prefs.getLong(KEY_REM_TS, 0L)
+        try {
+            val savedRem = JSONObject(prefs.getString(KEY_REM, "{}") ?: "{}")
+            for (k in savedRem.keys()) {
+                val due = savedRem.optLong(k, 0)
+                if (due > 0) {
+                    remDue[k] = due
+                    scheduledRem[k] = reminderPending(k, "", "")
+                }
+            }
+        } catch (e: Exception) { /* sin recordatorios */ }
         configured = room.isNotEmpty()
         if (configured) active = true
         @Suppress("DEPRECATION")
@@ -299,6 +314,8 @@ class SyncService : Service() {
         try {
             c.subscribe("$base/evt", 1)
             c.subscribe("$base/places", 1)
+            c.subscribe("$base/chat", 1)
+            c.subscribe("$base/rem", 1)
         } catch (e: Exception) { /* sin conexión */ }
         publishProfile()
         publishPos(force = true)
@@ -391,8 +408,90 @@ class SyncService : Service() {
                 prefs.edit().putString(KEY_PLACES, incoming.toString()).putLong(KEY_PLACES_TS, ts).apply()
                 checkFences()
             }
+            topic.endsWith("/chat") -> handleChat(data)
+            topic.endsWith("/rem") -> handleRem(data)
             topic.endsWith("/evt") -> handleEvt(data)
         }
+    }
+
+    private fun handleChat(data: JSONObject) {
+        val from = data.optString("name")
+        val text = data.optString("text").replace("<", "").replace(">", "").trim().take(240)
+        if (from.isEmpty() || text.isEmpty()) return
+        val bucket = data.optLong("ts", System.currentTimeMillis()) / 60000
+        val key = "${data.optString("id")}|chat|$bucket"
+        if (!seenEvt.add(key)) return
+        if (seenEvt.size > 500) seenEvt.clear()
+        notifyUser("Mensaje de $from", text)
+    }
+
+    private fun handleRem(data: JSONObject) {
+        val ts = data.optLong("ts", 0)
+        if (ts < remSeenTs) return
+        remSeenTs = ts
+        val arr = data.optJSONArray("reminders") ?: JSONArray()
+        scheduleReminders(arr)
+    }
+
+    private fun scheduleReminders(arr: JSONArray) {
+        val am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val now = System.currentTimeMillis()
+        val active = HashSet<String>()
+        for (i in 0 until arr.length()) {
+            val r = arr.optJSONObject(i) ?: continue
+            val id = r.optString("id")
+            val text = r.optString("text").replace("<", "").replace(">", "").trim().take(240)
+            val due = r.optLong("due", 0)
+            if (id.isEmpty() || text.isEmpty() || due <= now) continue
+            active.add(id)
+            if (remDue[id] == due && scheduledRem.containsKey(id)) continue
+            val existing = scheduledRem.remove(id)
+            if (existing != null) {
+                try { am.cancel(existing) } catch (e: Exception) { /* sin alarma */ }
+                existing.cancel()
+            }
+            val pi = reminderPending(id, text, r.optString("ownerName"))
+            scheduledRem[id] = pi
+            remDue[id] = due
+            try {
+                when {
+                    Build.VERSION.SDK_INT >= 31 && am.canScheduleExactAlarms() ->
+                        am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, due, pi)
+                    Build.VERSION.SDK_INT >= 23 ->
+                        am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, due, pi)
+                    else -> am.set(AlarmManager.RTC_WAKEUP, due, pi)
+                }
+            } catch (e: Exception) {
+                try { am.set(AlarmManager.RTC_WAKEUP, due, pi) } catch (e2: Exception) { /* sin alarma */ }
+            }
+        }
+        val stale = scheduledRem.keys.filter { it !in active }
+        for (id in stale) {
+            val pi = scheduledRem.remove(id)
+            remDue.remove(id)
+            if (pi != null) {
+                try { am.cancel(pi) } catch (e: Exception) { /* sin alarma */ }
+                pi.cancel()
+            }
+        }
+        persistRemState()
+    }
+
+    private fun reminderPending(id: String, text: String, from: String): PendingIntent {
+        val intent = Intent(this, ReminderReceiver::class.java)
+            .putExtra("id", id)
+            .putExtra("text", text)
+            .putExtra("from", from)
+        return PendingIntent.getBroadcast(
+            this, id.hashCode(), intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
+    private fun persistRemState() {
+        val obj = JSONObject()
+        for ((id, due) in remDue) obj.put(id, due)
+        prefs.edit().putString(KEY_REM, obj.toString()).putLong(KEY_REM_TS, remSeenTs).apply()
     }
 
     private fun handleEvt(data: JSONObject) {
@@ -691,6 +790,8 @@ class SyncService : Service() {
         const val KEY_NOTIF_SOS = "notifSos"
         const val KEY_PLACES = "places"
         const val KEY_PLACES_TS = "placesTs"
+        const val KEY_REM = "remScheduled"
+        const val KEY_REM_TS = "remSeenTs"
 
         const val CH_SYNC = "nexo_sync"
         const val CH_AVISOS = "nexo_avisos"

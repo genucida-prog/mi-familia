@@ -18,6 +18,11 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- Recordatorios exactos (AlarmManager); si el SO lo revoca se usa el inexacto. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- Pasos de Health Connect en la pantalla Conducción. -->
+    <uses-permission android:name="android.permission.health.READ_STEPS" />
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
 
     <application
         android:allowBackup="true"
@@ -47,6 +52,11 @@
             android:name=".SyncService"
             android:exported="false"
             android:foregroundServiceType="location" />
+
+        <!-- Dispara la notificación de recordatorio programada por SyncService. -->
+        <receiver
+            android:name=".ReminderReceiver"
+            android:exported="false" />
     </application>
 
 </manifest>

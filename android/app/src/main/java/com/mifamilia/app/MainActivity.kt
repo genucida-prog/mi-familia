@@ -350,6 +350,23 @@ class MainActivity : ComponentActivity() {
             dispatch(SyncService.ACTION_STOP_SUPER, "")
         }
 
+        @JavascriptInterface
+        fun healthSteps(): String = HealthBridge.steps(this@MainActivity)
+
+        @JavascriptInterface
+        fun healthRequest() {
+            HealthBridge.request(this@MainActivity) { granted ->
+                try {
+                    webView.evaluateJavascript(
+                        "window.nexoHealthPerm && window.nexoHealthPerm(" + granted + ")",
+                        null
+                    )
+                } catch (e: Exception) {
+                    // WebView already gone: nothing to notify.
+                }
+            }
+        }
+
         private fun dispatch(action: String, json: String) {
             val intent = Intent(this@MainActivity, SyncService::class.java).setAction(action)
             if (json.isNotEmpty()) intent.putExtra(SyncService.EXTRA_JSON, json)

@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="es-ES">
+<html lang="es-ES" data-theme="auto">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="light" />
+  <meta name="color-scheme" content="light dark" />
   <title>Mi Familia — localización familiar</title>
   <meta name="theme-color" content="#0E7A66" />
-  <meta name="app-version" content="1.2.1" />
+  <meta name="app-version" content="1.3.0" />
   <link rel="icon" type="image/svg+xml" href="icon.svg" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
@@ -258,6 +258,11 @@
       --c-danger-soft: #FCEBEA;
       --c-line: #D8E2DF;
       --c-veil: rgba(18, 33, 30, .45);
+      --c-skel: #E2EAE7;
+      --c-track: #B7C4C0;
+      --c-line-strong: #AEBFBA;
+      --c-toast-bg: #12211E;
+      --c-toast-fg: #F2F7F5;
       --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px;
       --sp-6: 24px; --sp-8: 32px; --sp-12: 48px;
       --r-card: 12px; --r-sheet: 16px; --r-pill: 999px;
@@ -267,6 +272,66 @@
       --ease-in: ease-in; --ease-out: ease-out;
       --font-body: system-ui, -apple-system, "Segoe UI", sans-serif;
       --font-display: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif;
+    }
+
+    /* ===== Paleta oscura (opción "Oscuro") ===== */
+    :root[data-theme="dark"] {
+      --phone-screen-bg: #101614;
+      --phone-system-fg: #E8EEEC;
+      --c-ground: #101614;
+      --c-surface: #18211F;
+      --c-surface-alt: #1F2A27;
+      --c-ink: #EAF2EF;
+      --c-ink-muted: #A9BBB5;
+      --c-primary: #3FBF9E;
+      --c-primary-deep: #2FA487;
+      --c-on-primary: #06231C;
+      --c-alert: #E8B45C;
+      --c-alert-soft: #2C2415;
+      --c-alert-line: #5C4A21;
+      --c-danger: #C9362D;
+      --c-danger-deep: #A32A22;
+      --c-danger-soft: #2A1513;
+      --c-line: #2B3733;
+      --c-veil: rgba(0, 0, 0, .62);
+      --c-skel: #23302C;
+      --c-track: #3A4744;
+      --c-line-strong: #45534E;
+      --c-toast-bg: #EAF2EF;
+      --c-toast-fg: #101614;
+      --sh-card: 0 2px 8px rgba(0, 0, 0, .45);
+      --sh-float: 0 8px 24px rgba(0, 0, 0, .55);
+    }
+
+    /* ===== Paleta oscura (opción "Auto": sigue al sistema) ===== */
+    @media (prefers-color-scheme: dark) {
+      :root[data-theme="auto"] {
+        --phone-screen-bg: #101614;
+        --phone-system-fg: #E8EEEC;
+        --c-ground: #101614;
+        --c-surface: #18211F;
+        --c-surface-alt: #1F2A27;
+        --c-ink: #EAF2EF;
+        --c-ink-muted: #A9BBB5;
+        --c-primary: #3FBF9E;
+        --c-primary-deep: #2FA487;
+        --c-on-primary: #06231C;
+        --c-alert: #E8B45C;
+        --c-alert-soft: #2C2415;
+        --c-alert-line: #5C4A21;
+        --c-danger: #C9362D;
+        --c-danger-deep: #A32A22;
+        --c-danger-soft: #2A1513;
+        --c-line: #2B3733;
+        --c-veil: rgba(0, 0, 0, .62);
+        --c-skel: #23302C;
+        --c-track: #3A4744;
+        --c-line-strong: #45534E;
+        --c-toast-bg: #EAF2EF;
+        --c-toast-fg: #101614;
+        --sh-card: 0 2px 8px rgba(0, 0, 0, .45);
+        --sh-float: 0 8px 24px rgba(0, 0, 0, .55);
+      }
     }
 
     /* ===== Shell-document adjustments owned by the product ===== */
@@ -554,6 +619,86 @@
     .fab-center:active { transform: scale(.96); }
     .fab-center .ic { width: 22px; height: 22px; }
 
+    .fab-chat {
+      position: absolute;
+      left: var(--sp-4);
+      bottom: calc(var(--sp-4) + 56px);
+      width: 48px;
+      height: 48px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--c-primary);
+      color: var(--c-on-primary);
+      display: grid;
+      place-items: center;
+      box-shadow: var(--sh-float);
+      z-index: 5;
+      transition: background-color var(--t-fast) var(--ease-out), transform var(--t-fast) var(--ease-out);
+    }
+    .fab-chat:hover { background: var(--c-primary-deep); }
+    .fab-chat:active { transform: scale(.96); }
+    .fab-chat .ic { width: 22px; height: 22px; }
+    .fab-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 5px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--r-pill);
+      background: var(--c-danger);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1;
+      border: 2px solid var(--c-surface);
+    }
+
+    .chat-log {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-2);
+      min-height: 180px;
+      max-height: 46dvh;
+      overflow-y: auto;
+      padding: var(--sp-2) 2px;
+      overscroll-behavior: contain;
+    }
+    .chat-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: var(--sp-6) var(--sp-4);
+      text-align: center;
+      color: var(--c-ink-muted);
+      font-size: 13px;
+    }
+    .chat-empty .ic { width: 28px; height: 28px; color: var(--c-primary); }
+    .chat-msg { display: flex; flex-direction: column; gap: 2px; max-width: 84%; }
+    .chat-msg.self { align-self: flex-end; align-items: flex-end; }
+    .chat-bubble {
+      padding: 8px 12px;
+      border-radius: var(--r-sheet);
+      background: var(--c-surface-alt);
+      border: 1px solid var(--c-line);
+      font-size: 14px;
+      line-height: 1.4;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+    .chat-msg.self .chat-bubble {
+      background: var(--c-primary);
+      border-color: var(--c-primary);
+      color: var(--c-on-primary);
+    }
+    .chat-who { font-size: 11px; color: var(--c-ink-muted); padding: 0 4px; }
+    .chat-time { font-size: 10px; color: var(--c-ink-muted); padding: 0 4px; }
+    .chat-row { display: flex; align-items: center; gap: var(--sp-2); margin-top: var(--sp-2); }
+    .chat-row .input { flex: 1 1 0; min-width: 0; }
+
     .map-style {
       position: absolute;
       left: var(--sp-4);
@@ -712,7 +857,7 @@
     .tone-btn[aria-pressed="true"] {
       background: var(--c-primary-deep);
       border-color: var(--c-primary-deep);
-      color: #fff;
+      color: var(--c-on-primary);
     }
 
     .switch { position: relative; flex: none; display: inline-flex; }
@@ -730,7 +875,7 @@
       width: 46px;
       height: 28px;
       border-radius: var(--r-pill);
-      background: #B7C4C0;
+      background: var(--c-track);
       transition: background-color var(--t-base) var(--ease-out);
       pointer-events: none;
     }
@@ -827,7 +972,7 @@
     .tl-meta { font-size: 13px; color: var(--c-ink-muted); }
 
     .skel-card { display: flex; flex-direction: column; gap: var(--sp-3); padding: var(--sp-3); }
-    .skel-line { height: 12px; border-radius: var(--r-pill); background: #E2EAE7; animation: skelPulse 1.3s var(--ease-out) infinite; }
+    .skel-line { height: 12px; border-radius: var(--r-pill); background: var(--c-skel); animation: skelPulse 1.3s var(--ease-out) infinite; }
     .skel-line.w1 { width: 62%; }
     .skel-line.w2 { width: 40%; }
     @keyframes skelPulse { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
@@ -888,7 +1033,7 @@
       color: var(--c-alert);
     }
     .banner .ic { width: 20px; height: 20px; flex: none; }
-    .banner .btn { min-height: 36px; font-size: 13px; padding: 0 var(--sp-3); background: #fff; color: var(--c-alert); border-color: var(--c-alert-line); }
+    .banner .btn { min-height: 36px; font-size: 13px; padding: 0 var(--sp-3); background: var(--c-surface); color: var(--c-alert); border-color: var(--c-alert-line); }
     .banner .btn:hover { background: var(--c-alert-soft); filter: brightness(.97); }
 
     /* ===== Tabbar ===== */
@@ -1041,7 +1186,7 @@
       padding: 3px 8px;
       border: 1px solid var(--c-line);
       border-radius: var(--r-pill);
-      background: rgba(255, 255, 255, .92);
+      background: var(--c-surface);
       color: var(--c-primary-deep);
       font-size: 11px;
       font-weight: 680;
@@ -1194,7 +1339,7 @@
       border-radius: var(--r-card);
       transition: border-color var(--t-fast) var(--ease-out);
     }
-    .input:hover { border-color: #AEBFBA; }
+    .input:hover { border-color: var(--c-line-strong); }
     .input:focus-visible { outline: 2px solid var(--c-primary-deep); outline-offset: 1px; border-color: var(--c-primary-deep); }
     .input[aria-invalid="true"] { border-color: var(--c-danger); }
     .field-error {
@@ -1209,7 +1354,7 @@
       width: 44px;
       height: 44px;
       border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.75);
+      border: 2px solid var(--c-surface);
       box-shadow: 0 0 0 1px var(--c-line);
       cursor: pointer;
       transition: transform var(--t-fast) var(--ease-out);
@@ -1268,7 +1413,46 @@
     .sos-sub { font-size: 13px; color: var(--c-ink); }
     .sos-clock { font-family: var(--font-display); font-size: 32px; font-weight: 750; letter-spacing: .02em; text-align: center; }
 
+    /* ===== Splash de arranque (1,2 s) ===== */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--sp-4);
+      background: var(--c-ground);
+      transition: opacity var(--t-slow) var(--ease-out);
+    }
+    #splash.out { opacity: 0; pointer-events: none; }
+    .splash-mark {
+      width: 88px;
+      height: 88px;
+      display: grid;
+      place-items: center;
+      border-radius: 24px;
+      background: var(--c-primary);
+      box-shadow: var(--sh-float);
+    }
+    .splash-name {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--c-ink);
+      letter-spacing: .01em;
+    }
+
+    /* ===== Modo conducción: menos distracciones, solo lo esencial ===== */
+    body[data-driving="on"] #btn-chat,
+    body[data-driving="on"] .banner { display: none; }
+
     /* toast */
+    html[data-theme="dark"] body { background: var(--c-ground) !important; }
+    @media (prefers-color-scheme: dark) {
+      html[data-theme="auto"] body { background: var(--c-ground) !important; }
+    }
     .toast {
       position: absolute;
       left: var(--sp-4);
@@ -1279,8 +1463,8 @@
       align-items: center;
       gap: var(--sp-2);
       padding: var(--sp-3);
-      background: var(--c-ink);
-      color: #F2F7F5;
+      background: var(--c-toast-bg);
+      color: var(--c-toast-fg);
       border-radius: var(--r-card);
       font-size: 14px;
       line-height: 1.4;
@@ -1311,6 +1495,12 @@
   </style>
 </head>
 <body>
+  <div id="splash" aria-hidden="true">
+    <span class="splash-mark">
+      <svg viewBox="0 0 512 512" width="46" height="46" fill="none"><path d="M256 400c0 0-104-106-104-176a104 104 0 0 1 208 0c0 70-104 176-104 176z" stroke="#fff" stroke-width="44" stroke-linejoin="round"/><path transform="translate(190 148) scale(5.5)" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#fff"/></svg>
+    </span>
+    <span class="splash-name">Mi Familia</span>
+  </div>
   <div class="phone-frame" data-phone-shell data-platform="android">
     <span class="hardware-button volume" aria-hidden="true"></span>
     <span class="hardware-button power" aria-hidden="true"></span>
@@ -1345,6 +1535,9 @@
             <g id="i-copy"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5.5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5v1"/></g>
             <g id="i-share"><path d="M12 15.5V4"/><path d="M8 7.5 12 3.5l4 4"/><path d="M5 13v5.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V13"/></g>
             <g id="i-edit"><path d="M4.5 19.5h15"/><path d="M13.7 5.4l3.2 3.2-8 8-4.1.9.9-4.1 8-8Z"/></g>
+            <g id="i-chat"><path d="M4.5 6.5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H10l-4 3.5V16h-.5a2 2 0 0 1-2-2v-7Z"/></g>
+            <g id="i-phone"><path d="M6.2 4.5h3l1.4 3.6-1.9 1.5a10.5 10.5 0 0 0 4.7 4.7l1.5-1.9 3.6 1.4v3a1.7 1.7 0 0 1-1.8 1.7C9.6 17.8 6.2 14.4 4.5 6.3a1.7 1.7 0 0 1 1.7-1.8Z"/></g>
+            <g id="i-download"><path d="M12 4.5v10M7.5 10.5 12 15l4.5-4.5"/><path d="M5 17.5v1.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1.5"/></g>
           </defs>
         </svg>
 
@@ -1418,6 +1611,10 @@
                 <button type="button" class="fab-center" id="btn-recenter" aria-label="Recentrar el mapa en la familia">
                   <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-nav"/></svg>
                 </button>
+                <button type="button" class="fab-chat" id="btn-chat" aria-label="Abrir el chat de la familia">
+                  <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-chat"/></svg>
+                  <span class="fab-badge" id="chat-badge" hidden>0</span>
+                </button>
                 <button type="button" class="fab-sos" id="btn-sos" aria-label="Activar SOS">SOS</button>
               </div>
 
@@ -1456,6 +1653,14 @@
                   </div>
                   <div class="od-stack" id="activity-list" hidden></div>
                 </div>
+                <div class="od-row" style="margin-top:18px;justify-content:space-between">
+                  <h2 class="section-title">Recordatorios</h2>
+                  <button type="button" class="btn btn-ghost" id="btn-add-rem" style="min-height:40px;font-size:13px">
+                    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-plus"/></svg>
+                    Nuevo
+                  </button>
+                </div>
+                <div class="od-stack" id="reminders-list" style="margin-top:6px"></div>
                 <button type="button" class="btn btn-quiet-danger btn-block" id="btn-clear-history" hidden>
                   <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-trash"/></svg>
                   Borrar historial de actividad
@@ -1467,6 +1672,15 @@
             <section class="screen" id="screen-conduccion" aria-label="Informes de conducción" hidden>
               <div class="scroll-body od-scroll">
                 <p class="lede">Resumen de los últimos viajes en coche del círculo. La velocidad media se calcula con los trayectos registrados.</p>
+                <div class="card" style="margin-top:14px">
+                  <div class="od-row" style="align-items:center">
+                    <div class="od-fill od-field">
+                      <span class="row-title">Modo conducción</span>
+                      <span class="row-help">Oculta chat y avisos para mirar solo el mapa</span>
+                    </div>
+                    <span class="switch"><input type="checkbox" id="driving-switch" aria-label="Modo conducción" /><span class="track" aria-hidden="true"><span class="knob"></span></span></span>
+                  </div>
+                </div>
                 <div class="od-grid" style="--od-cols:3">
                   <div class="stat-box od-stat">
                     <span class="stat-value od-nowrap" id="trip-total-km">—</span>
@@ -1479,6 +1693,19 @@
                   <div class="stat-box od-stat">
                     <span class="stat-value od-nowrap" id="trip-total-time">—</span>
                     <span class="stat-label">Tiempo</span>
+                  </div>
+                </div>
+                <div class="card" style="margin-top:14px">
+                  <div class="od-row" style="align-items:center">
+                    <span class="tl-icon" aria-hidden="true">
+                      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-pulse"/></svg>
+                    </span>
+                    <div class="od-fill od-field">
+                      <span class="row-title">Pasos hoy</span>
+                      <span class="row-help" id="steps-help">Health Connect</span>
+                    </div>
+                    <span class="stat-value od-nowrap" id="steps-today">No disponible</span>
+                    <button type="button" class="btn btn-ghost od-fixed" id="btn-steps" style="min-height:40px;font-size:13px" hidden>Permitir</button>
                   </div>
                 </div>
                 <h2 class="section-title" style="margin-top:20px">Viajes recientes</h2>
@@ -1510,6 +1737,11 @@
                     <div class="od-field">
                       <label class="field-label" for="my-name-input">Tu nombre</label>
                       <input class="input" id="my-name-input" type="text" placeholder="Por ejemplo: Mamá" autocomplete="given-name" maxlength="28" />
+                    </div>
+                    <div class="od-field">
+                      <label class="field-label" for="my-phone-input">Tu teléfono</label>
+                      <input class="input" id="my-phone-input" type="tel" placeholder="Por ejemplo: 600 123 456" autocomplete="tel" maxlength="18" inputmode="tel" />
+                      <span class="row-help" id="my-phone-help">Solo tu familia lo verá en tu ficha para poder llamarte.</span>
                     </div>
                     <div class="od-field">
                       <span class="field-label">Tu foto</span>
@@ -1659,6 +1891,13 @@
                     </label>
                     <div class="row">
                       <span class="od-fill od-field">
+                        <span class="row-title">Avisos web push</span>
+                        <span class="row-help">Avisos del navegador aunque no tengas Mi Familia abierto (solo en este equipo)</span>
+                      </span>
+                      <span class="switch"><input type="checkbox" id="push-switch" aria-label="Avisos web push" /><span class="track" aria-hidden="true"><span class="knob"></span></span></span>
+                    </div>
+                    <div class="row">
+                      <span class="od-fill od-field">
                         <span class="row-title">Superllamada</span>
                         <span class="row-help">Alarma a volumen máximo con vibración fuerte al activar SOS o al recibir un aviso, aunque el móvil esté en silencio</span>
                       </span>
@@ -1730,10 +1969,28 @@
                   <div class="card">
                     <div class="row">
                       <div class="od-fill od-field">
+                        <span class="row-title">Tema de la app</span>
+                        <span class="row-help">Claridad según tu sistema o fíjalo a mano</span>
+                      </div>
+                      <span class="od-cluster" role="group" aria-label="Tema de la app">
+                        <button type="button" class="tone-btn theme-opt" data-theme-opt="auto" aria-pressed="true">Auto</button>
+                        <button type="button" class="tone-btn theme-opt" data-theme-opt="light" aria-pressed="false">Claro</button>
+                        <button type="button" class="tone-btn theme-opt" data-theme-opt="dark" aria-pressed="false">Oscuro</button>
+                      </span>
+                    </div>
+                    <div class="row">
+                      <div class="od-fill od-field">
                         <span class="row-title">Actualizar Mi Familia</span>
-                        <span class="row-help" id="update-status">Versión instalada: 1.2.1</span>
+                        <span class="row-help" id="update-status">Versión instalada: 1.3.0</span>
                       </div>
                       <button type="button" class="btn btn-ghost" id="btn-check-update" style="min-height:40px;font-size:14px">Comprobar</button>
+                    </div>
+                    <div class="row">
+                      <div class="od-fill od-field">
+                        <span class="row-title">Exportar datos</span>
+                        <span class="row-help">Copia de seguridad de tus datos (nexo-*) en JSON</span>
+                      </div>
+                      <button type="button" class="btn btn-ghost" id="btn-export" style="min-height:40px;font-size:14px">Exportar</button>
                     </div>
                   </div>
                 </div>
@@ -1815,6 +2072,16 @@
             </div>
           </div>
           <p class="lede" id="member-note" style="margin-top:12px">—</p>
+          <div class="od-row" id="member-phone-row" hidden style="margin-top:12px;align-items:center">
+            <div class="od-fill od-field">
+              <span class="row-title od-nowrap" id="member-phone">—</span>
+              <span class="row-help">Teléfono · solo lo ve tu familia</span>
+            </div>
+            <a class="btn btn-ghost" id="btn-member-call" href="tel:" style="min-height:40px;font-size:14px">
+              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-phone"/></svg>
+              Llamar
+            </a>
+          </div>
           <div class="od-field" style="margin-top:12px">
             <span class="field-label" id="member-color-label">Color en el mapa</span>
             <div class="swatch-row" role="group" aria-labelledby="member-color-label">
@@ -1991,6 +2258,54 @@
         </div>
       </div>
 
+      <div class="overlay" id="ov-chat" hidden>
+        <button type="button" class="scrim" data-dismiss aria-label="Cerrar chat"></button>
+        <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="chat-title">
+          <div class="grab" aria-hidden="true"></div>
+          <div class="od-row" style="margin-bottom:4px">
+            <div class="od-fill od-field">
+              <span class="sheet-title" id="chat-title">Chat de la familia</span>
+              <span class="sheet-sub" id="chat-sub">—</span>
+            </div>
+            <button type="button" class="icon-btn plain" data-dismiss aria-label="Cerrar chat">
+              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-x"/></svg>
+            </button>
+          </div>
+          <div class="chat-log od-scroll" id="chat-log" role="log" aria-live="polite"></div>
+          <form class="chat-row" id="chat-form">
+            <input class="input" id="chat-input" type="text" placeholder="Escribe un mensaje…" maxlength="240" autocomplete="off" aria-label="Mensaje" />
+            <button type="submit" class="btn btn-primary" id="chat-send" style="min-height:44px">Enviar</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="overlay" id="ov-remind" hidden>
+        <button type="button" class="scrim" data-dismiss aria-label="Cancelar"></button>
+        <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="rem-title">
+          <div class="od-row-top">
+            <span class="tl-icon" aria-hidden="true">
+              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-clock"/></svg>
+            </span>
+            <div class="od-fill od-field">
+              <span class="dialog-title" id="rem-title">Nuevo recordatorio</span>
+            </div>
+          </div>
+          <div class="od-field" style="margin-top:8px">
+            <label class="field-label" for="rem-input">¿Qué quieres recordar?</label>
+            <input class="input" id="rem-input" type="text" placeholder="Por ejemplo: Llamar a la escuela" maxlength="80" autocomplete="off" aria-describedby="rem-input-error" />
+            <span class="field-error" id="rem-input-error">Escribe un recordatorio.</span>
+          </div>
+          <div class="od-field" style="margin-top:8px">
+            <label class="field-label" for="rem-due">Cuándo</label>
+            <input class="input" id="rem-due" type="datetime-local" />
+          </div>
+          <div class="dialog-actions">
+            <button type="button" class="btn btn-ghost" data-dismiss>Cancelar</button>
+            <button type="button" class="btn btn-primary" id="btn-rem-go">Crear recordatorio</button>
+          </div>
+        </div>
+      </div>
+
       <div class="overlay" id="ov-circle-name" hidden>
         <button type="button" class="scrim" data-dismiss aria-label="Cancelar"></button>
         <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="circle-name-title">
@@ -2128,7 +2443,16 @@
         try { localStorage.setItem("nexo-places", JSON.stringify(places)); } catch (e) { /* sin storage */ }
       }
       function saveTrips() {
-        try { localStorage.setItem("nexo-trips", JSON.stringify(trips.slice(0, 50))); } catch (e) { /* sin storage */ }
+        try {
+          var out = trips.slice(0, 50).map(function (t, i) {
+            if (i < 10) return t;
+            var c = {};
+            for (var k in t) c[k] = t[k];
+            delete c.pathLL;
+            return c;
+          });
+          localStorage.setItem("nexo-trips", JSON.stringify(out));
+        } catch (e) { /* sin storage */ }
       }
       function saveMemberColors() {
         try { localStorage.setItem("nexo-member-colors", JSON.stringify(memberColors)); } catch (e) { /* sin storage */ }
@@ -2165,7 +2489,7 @@
       }
 
       /* ===== Mi perfil: nombre + foto sincronizados con la familia ===== */
-      var profile = { name: "", avatar: "" };
+      var profile = { name: "", avatar: "", phone: "" };
       var remoteProfiles = {};
 
       function saveProfile() {
@@ -2179,6 +2503,11 @@
       function cleanAvatar(s) {
         s = String(s == null ? "" : s);
         return (/^data:image\/(jpeg|png|webp);base64,/.test(s) && s.length <= 48000) ? s : "";
+      }
+
+      function cleanPhone(s) {
+        var out = String(s == null ? "" : s).replace(/[^0-9+ ]/g, "").trim().slice(0, 18);
+        return /^[0-9+ ][0-9+ ]*$/.test(out) ? out : "";
       }
 
       function selfName() {
@@ -2204,6 +2533,8 @@
         }
         var inp = $("#my-name-input");
         if (inp && document.activeElement !== inp) inp.value = profile.name;
+        var phInp = $("#my-phone-input");
+        if (phInp && document.activeElement !== phInp) phInp.value = profile.phone;
         var mapName = document.querySelector(".me-name");
         if (mapName) mapName.textContent = selfName();
         var help = $("#my-ava-help");
@@ -2362,6 +2693,7 @@
             renderActivity();
           }, 700);
         }
+        if (name === "conduccion") loadSteps();
       }
 
       $$(".tab").forEach(function (t) {
@@ -2436,6 +2768,13 @@
           : "—";
         $("#member-upd").textContent = m.upd;
         $("#member-note").textContent = m.note;
+        var mpRow = $("#member-phone-row");
+        var mpNum = m.phone || (remoteProfiles[m.id] && remoteProfiles[m.id].phone) || "";
+        mpRow.hidden = !mpNum;
+        if (mpNum) {
+          $("#member-phone").textContent = mpNum;
+          $("#btn-member-call").href = "tel:" + mpNum.replace(/[^0-9+]/g, "");
+        }
         var ci = $("#btn-checkin");
         ci.disabled = false;
         $("#checkin-label").textContent = "Pedir check-in";
@@ -2998,9 +3337,12 @@
             html += '<h2 class="day-label">' + a.day + '</h2>';
             lastDay = a.day;
           }
-          var tlIcon = a.kind === "conduccion" ? "i-car" : (a.kind === "sos" ? "i-alert" : (a.kind === "salida" ? "i-out" : "i-in"));
+          var tlIcon = a.kind === "conduccion" ? "i-car"
+            : (a.kind === "sos" ? "i-alert"
+            : (a.kind === "bateria" ? "i-battery"
+            : (a.kind === "salida" ? "i-out" : "i-in")));
           html += '<article class="tl-item">' +
-            '<span class="tl-icon' + ((a.kind === "salida" || a.kind === "sos") ? " out" : "") + '" aria-hidden="true">' +
+            '<span class="tl-icon' + ((a.kind === "salida" || a.kind === "sos" || a.kind === "bateria") ? " out" : "") + '" aria-hidden="true">' +
               icon(tlIcon) + '</span>' +
             '<div class="od-fill od-field">' +
               '<span class="tl-main">' + a.main + '</span>' +
@@ -3104,6 +3446,7 @@
         var t = trips.filter(function (x) { return x.id === id; })[0];
         if (!t) return;
         currentTrip = t;
+        if (t.pathLL && t.pathLL.length > 1 && map) paintRoute(t.pathLL);
         $("#trip-sheet-title").textContent = t.from + " → " + t.to;
         $("#trip-sheet-sub").textContent = t.day + " · " + t.time + " · " + t.who;
         $("#trip-sheet-map").innerHTML = routeSvg(t.path);
@@ -3128,8 +3471,46 @@
         var t = currentTrip;
         closeOverlay($("#ov-trip"));
         setScreen("mapa");
-        setTimeout(function () { drawRoute(t.fromLL, t.toLL); }, 280);
+        setTimeout(function () {
+          if (t.pathLL && t.pathLL.length > 1 && map) paintRoute(t.pathLL);
+          else drawRoute(t.fromLL, t.toLL);
+        }, 280);
       });
+
+      /* ===== Pasos de hoy (Health Connect; degrada a "No disponible") ===== */
+      function loadSteps() {
+        var out = $("#steps-today");
+        var btn = $("#btn-steps");
+        var help = $("#steps-help");
+        if (!out) return;
+        if (!window.NexoNative || !NexoNative.healthSteps) {
+          out.textContent = "No disponible";
+          if (help) help.textContent = "Solo disponible en la app de Android";
+          if (btn) btn.hidden = true;
+          return;
+        }
+        var steps = null;
+        try { steps = NexoNative.healthSteps(); } catch (e) { steps = "na"; }
+        if (steps === "na" || steps == null || steps === "") {
+          out.textContent = "No disponible";
+          if (help) help.textContent = "Concede el permiso de actividad para leerlo";
+          if (btn) { btn.hidden = false; btn.textContent = "Permitir"; }
+        } else {
+          out.textContent = Number(steps).toLocaleString("es-ES");
+          if (help) help.textContent = "Pasos registrados hoy en Health Connect";
+          if (btn) { btn.hidden = false; btn.textContent = "Actualizar"; }
+        }
+      }
+
+      $("#btn-steps").addEventListener("click", function () {
+        if (!window.NexoNative || !NexoNative.healthRequest) return;
+        try { NexoNative.healthRequest(); } catch (e) { /* sin puente */ }
+      });
+
+      window.nexoHealthPerm = function () {
+        loadSteps();
+        toast("Permiso de pasos actualizado");
+      };
 
       /* ===== Ajustes ===== */
       $$("[data-pref]").forEach(function (input) {
@@ -3142,6 +3523,26 @@
         });
       });
 
+      /* Tema: auto/claro/oscuro, persistido en nexo-theme */
+      function applyTheme(pref) {
+        if (pref !== "light" && pref !== "dark") pref = "auto";
+        document.documentElement.dataset.theme = pref;
+        try { localStorage.setItem("nexo-theme", pref); } catch (e) { /* sin storage */ }
+        $$(".theme-opt").forEach(function (b) {
+          b.setAttribute("aria-pressed", b.dataset.themeOpt === pref ? "true" : "false");
+        });
+      }
+      $$(".theme-opt").forEach(function (b) {
+        b.addEventListener("click", function () {
+          applyTheme(b.dataset.themeOpt);
+          toast(b.dataset.themeOpt === "dark" ? "Tema oscuro activado"
+            : (b.dataset.themeOpt === "light" ? "Tema claro activado" : "Tema según el sistema"));
+        });
+      });
+      try {
+        applyTheme(localStorage.getItem("nexo-theme") || "auto");
+      } catch (e) { applyTheme("auto"); }
+
       var myNameInput = $("#my-name-input");
       myNameInput.addEventListener("input", function () {
         profile.name = cleanName(this.value);
@@ -3153,6 +3554,17 @@
         publishProfile();
         nativeSetConfig();
         if (profile.name) toast("Tu nombre: " + profile.name);
+      });
+      var myPhoneInput = $("#my-phone-input");
+      myPhoneInput.addEventListener("input", function () {
+        profile.phone = cleanPhone(this.value);
+        saveProfile();
+      });
+      myPhoneInput.addEventListener("change", function () {
+        this.value = profile.phone;
+        publishProfile();
+        nativeSetConfig();
+        if (profile.phone) toast("Tu teléfono guardado");
       });
       $("#btn-ava-pick").addEventListener("click", function () { $("#ava-file").click(); });
       $("#ava-file").addEventListener("change", function () {
@@ -3287,6 +3699,8 @@
           $("#sync-code").textContent = sync.room;
           renderOnline();
         }
+        renderChat();
+        updateChatBadge();
       }
 
       function onlineCount() {
@@ -3322,7 +3736,10 @@
           pos: SYNC_PREFIX + "/" + sync.room + "/pos",
           evt: SYNC_PREFIX + "/" + sync.room + "/evt",
           places: SYNC_PREFIX + "/" + sync.room + "/places",
-          profile: SYNC_PREFIX + "/" + sync.room + "/profile"
+          profile: SYNC_PREFIX + "/" + sync.room + "/profile",
+          chat: SYNC_PREFIX + "/" + sync.room + "/chat",
+          rem: SYNC_PREFIX + "/" + sync.room + "/rem",
+          pushSub: SYNC_PREFIX + "/" + sync.room + "/push/sub"
         };
       }
 
@@ -3389,12 +3806,285 @@
           id: sync.identity,
           name: selfName(),
           avatar: profile.avatar || "",
+          phone: profile.phone || "",
           ts: Date.now()
         });
         try {
           sync.client.publish(syncTopics().profile + "/" + sync.identity, payload, { qos: 1, retain: true });
         } catch (e) { /* sin conexión */ }
       }
+
+      /* ===== Chat de sala (tema <room>/chat) ===== */
+      var chatLog = [];
+      var chatUnread = 0;
+      try {
+        var savedChat = JSON.parse(localStorage.getItem("nexo-chat") || "[]");
+        if (Array.isArray(savedChat)) chatLog = savedChat;
+      } catch (e) { /* sin storage */ }
+
+      function saveChat() {
+        try { localStorage.setItem("nexo-chat", JSON.stringify(chatLog.slice(-50))); } catch (e) { /* sin storage */ }
+      }
+
+      function chatTime(ts) {
+        return new Date(ts).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+      }
+
+      function cleanChatText(s) {
+        return String(s == null ? "" : s).replace(/[<>]/g, "").trim().slice(0, 240);
+      }
+
+      function renderChat() {
+        var log = $("#chat-log");
+        var sub = $("#chat-sub");
+        if (!log) return;
+        if (sub) sub.textContent = sync.state === "on"
+          ? "Sala " + sync.room + " · mensajes en vivo"
+          : "Sin sala: únete para enviar mensajes";
+        if (!chatLog.length) {
+          log.innerHTML = '<div class="chat-empty">' + icon("i-chat") +
+            '<span>Todavía no hay mensajes</span>' +
+            '<span>Escribe el primero para tu familia.</span></div>';
+        } else {
+          log.innerHTML = chatLog.map(function (c) {
+            return '<div class="chat-msg' + (c.self ? " self" : "") + '">' +
+              (c.self ? "" : '<span class="chat-who">' + cleanName(c.name) + '</span>') +
+              '<span class="chat-bubble">' + cleanChatText(c.text) + '</span>' +
+              '<span class="chat-time">' + chatTime(c.ts) + '</span>' +
+            '</div>';
+          }).join("");
+        }
+        log.scrollTop = log.scrollHeight;
+      }
+
+      function updateChatBadge() {
+        var b = $("#chat-badge");
+        if (!b) return;
+        var open = activeOverlay && activeOverlay.id === "ov-chat";
+        if (!open && chatUnread > 0) {
+          b.hidden = false;
+          b.textContent = chatUnread > 99 ? "99+" : String(chatUnread);
+        } else {
+          b.hidden = true;
+        }
+      }
+
+      function publishChat(text) {
+        var msg = cleanChatText(text);
+        if (!msg) return;
+        if (sync.state === "on" && sync.client && sync.identity) {
+          var payload = JSON.stringify({
+            v: 1,
+            device: sync.device,
+            id: sync.identity,
+            name: selfName(),
+            text: msg,
+            ts: Date.now()
+          });
+          try { sync.client.publish(syncTopics().chat, payload, { qos: 1 }); } catch (e) { /* sin conexión */ }
+        }
+        chatLog.push({ self: true, name: selfName(), text: msg, ts: Date.now() });
+        if (chatLog.length > 50) chatLog = chatLog.slice(-50);
+        saveChat();
+        renderChat();
+      }
+
+      $("#btn-chat").addEventListener("click", function () {
+        chatUnread = 0;
+        updateChatBadge();
+        renderChat();
+        openOverlay("ov-chat", this);
+        setTimeout(function () { $("#chat-input").focus(); }, 240);
+      });
+
+      $("#chat-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var input = $("#chat-input");
+        var text = cleanChatText(input.value);
+        if (!text) return;
+        if (sync.state !== "on") { toast("Únete a una sala para chatear con tu familia"); return; }
+        input.value = "";
+        publishChat(text);
+      });
+
+      /* ===== Aviso de batería baja (< 15 %, máximo 1 por miembro cada hora) ===== */
+      var lowBattSeen = {};
+
+      function maybeLowBatt(m) {
+        if (!m || m.batt == null || m.batt >= 15) return;
+        if (!prefOn("bateria")) return;
+        var now = Date.now();
+        if (lowBattSeen[m.id] && now - lowBattSeen[m.id] < 3600000) return;
+        lowBattSeen[m.id] = now;
+        notifyMe("Batería baja de " + m.name, "Solo le queda el " + m.batt + " % de batería.");
+        addActivityItem({
+          day: "Hoy",
+          kind: "bateria",
+          main: m.name + " tiene poca batería (" + m.batt + " %)",
+          meta: "Hoy · " + hhmmNow()
+        }, false);
+      }
+
+      /* ===== Recordatorios (store nexo-rem, tema retenido <room>/rem) ===== */
+      var reminders = [];
+      var remSeenTs = 0;
+      var remDirty = false;
+      var remTimers = [];
+      try {
+        var savedRem = JSON.parse(localStorage.getItem("nexo-rem") || "null");
+        if (savedRem && typeof savedRem === "object") {
+          remSeenTs = savedRem.ts || 0;
+          reminders = remClean(savedRem.list);
+        }
+      } catch (e) { /* sin storage */ }
+
+      function saveRem() {
+        try {
+          localStorage.setItem("nexo-rem", JSON.stringify({ ts: remSeenTs, list: reminders }));
+        } catch (e) { /* sin storage */ }
+      }
+
+      function remClean(list) {
+        var now = Date.now();
+        return (Array.isArray(list) ? list : []).filter(function (r) {
+          return r && r.id && r.text && typeof r.due === "number" && r.due > now - 60000;
+        });
+      }
+
+      function remWhen(due) {
+        var d = new Date(due);
+        var today = new Date();
+        var sameDay = d.toDateString() === today.toDateString();
+        var hm = d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+        if (sameDay) return "Hoy · " + hm;
+        return d.toLocaleDateString("es-ES", { day: "numeric", month: "short" }) + " · " + hm;
+      }
+
+      function renderReminders() {
+        var list = $("#reminders-list");
+        if (!list) return;
+        reminders = remClean(reminders).sort(function (a, b) { return a.due - b.due; });
+        if (!reminders.length) {
+          list.innerHTML = '<div class="card" style="padding:var(--sp-3)"><span class="row-help">Sin recordatorios pendientes. Crea uno con «Nuevo».</span></div>';
+          return;
+        }
+        list.innerHTML = reminders.map(function (r) {
+          return '<article class="card" style="padding:var(--sp-3);display:flex;align-items:center;gap:var(--sp-3)">' +
+            '<span class="place-mark" aria-hidden="true">' + icon("i-clock") + '</span>' +
+            '<div class="od-fill od-field">' +
+              '<span class="row-title">' + cleanName(r.text).replace(/</g, "&lt;") + '</span>' +
+              '<span class="row-help od-nowrap">' + remWhen(r.due) + ' · ' + cleanName(r.ownerName || "Familia") + '</span>' +
+            '</div>' +
+            '<button type="button" class="icon-btn plain" data-rem="' + r.id + '" aria-label="Cancelar recordatorio" style="color:var(--c-danger)">' + icon("i-trash") + '</button>' +
+          '</article>';
+        }).join("");
+      }
+
+      function scheduleRemLocal() {
+        remTimers.forEach(function (t) { clearTimeout(t); });
+        remTimers = [];
+        reminders.forEach(function (r) {
+          var delay = r.due - Date.now();
+          if (delay <= 0 || delay > 2147483000) return;
+          var t = setTimeout(function () {
+            if (r.due - Date.now() > 5000) { scheduleRemLocal(); return; }
+            reminders = reminders.filter(function (x) { return x.id !== r.id; });
+            saveRem();
+            renderReminders();
+            notifyMe("Recordatorio", r.text);
+            toast("Recordatorio: " + r.text);
+          }, delay);
+          remTimers.push(t);
+        });
+      }
+
+      function publishRem() {
+        remSeenTs = Date.now();
+        saveRem();
+        remDirty = false;
+        if (sync.state !== "on" || !sync.client || !sync.identity) { remDirty = true; return; }
+        var payload = JSON.stringify({
+          v: 1,
+          device: sync.device,
+          ts: remSeenTs,
+          reminders: reminders
+        });
+        try {
+          sync.client.publish(syncTopics().rem, payload, { qos: 1, retain: true });
+        } catch (e) { remDirty = true; /* sin conexión */ }
+      }
+
+      function applyRemList(list, ts) {
+        reminders = remClean(list);
+        if (ts > remSeenTs) remSeenTs = ts;
+        saveRem();
+        renderReminders();
+        scheduleRemLocal();
+      }
+
+      function openRem(opener) {
+        var input = $("#rem-input");
+        var due = $("#rem-due");
+        input.value = "";
+        $("#rem-input-error").classList.remove("show");
+        input.setAttribute("aria-invalid", "false");
+        var d = new Date(Date.now() + 3600000);
+        d.setSeconds(0, 0);
+        var pad = function (n) { return String(n).padStart(2, "0"); };
+        due.value = d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) +
+          "T" + pad(d.getHours()) + ":" + pad(d.getMinutes());
+        openOverlay("ov-remind", opener);
+      }
+
+      $("#btn-add-rem").addEventListener("click", function () { openRem(this); });
+
+      $("#rem-input").addEventListener("input", function () {
+        if (this.value.trim() !== "") {
+          $("#rem-input-error").classList.remove("show");
+          this.setAttribute("aria-invalid", "false");
+        }
+      });
+
+      $("#btn-rem-go").addEventListener("click", function () {
+        var input = $("#rem-input");
+        var text = cleanChatText(input.value);
+        if (!text) {
+          $("#rem-input-error").classList.add("show");
+          input.setAttribute("aria-invalid", "true");
+          input.focus();
+          return;
+        }
+        var dueVal = $("#rem-due").value;
+        var due = dueVal ? new Date(dueVal).getTime() : NaN;
+        if (!isFinite(due) || due < Date.now()) {
+          toast("Elige una fecha futura para el recordatorio");
+          $("#rem-due").focus();
+          return;
+        }
+        reminders.push({
+          id: "r" + Date.now() + Math.random().toString(36).slice(2, 6),
+          text: text.slice(0, 80),
+          due: due,
+          owner: sync.identity || "yo",
+          ownerName: selfName()
+        });
+        closeOverlay($("#ov-remind"));
+        renderReminders();
+        scheduleRemLocal();
+        publishRem();
+        toast("Recordatorio creado: " + text.slice(0, 40));
+      });
+
+      $("#reminders-list").addEventListener("click", function (e) {
+        var b = e.target.closest("[data-rem]");
+        if (!b) return;
+        var id = b.dataset.rem;
+        reminders = reminders.filter(function (r) { return r.id !== id; });
+        renderReminders();
+        scheduleRemLocal();
+        publishRem();
+        toast("Recordatorio cancelado");
+      });
 
       function addActivityItem(item, remote) {
         activity.unshift(item);
@@ -3446,6 +4136,7 @@
               real: who,
               initial: (cleanName(data.initial || who.charAt(0)) || "?").charAt(0),
               avatar: (rp0 && rp0.avatar) || null,
+              phone: (rp0 && rp0.phone) || null,
               status: "Compartiendo ubicación",
               place: "",
               batt: typeof data.batt === "number" ? data.batt : null,
@@ -3465,10 +4156,14 @@
           var rp = remoteProfiles[data.id];
           if (rp && rp.name) { m.name = rp.name; m.real = rp.name; }
           m.avatar = rp ? (rp.avatar || null) : (m.avatar || null);
+          if (rp && rp.phone) m.phone = rp.phone;
           m.lat = data.lat;
           m.lng = data.lng;
           m.upd = "ahora";
-          if (typeof data.batt === "number") m.batt = data.batt;
+          if (typeof data.batt === "number") {
+            m.batt = data.batt;
+            maybeLowBatt(m);
+          }
           m.x = Math.min(94, Math.max(6, 50 + (data.lng + 3.7000) / 0.06 * 100));
           m.y = Math.min(94, Math.max(6, 50 - (data.lat - 40.4350) / 0.06 * 100));
           renderMembers();
@@ -3491,11 +4186,13 @@
           if (!data.id || data.id === sync.identity) return;
           var pn = cleanName(data.name || "");
           var pa = cleanAvatar(data.avatar || "");
-          remoteProfiles[data.id] = { name: pn, avatar: pa };
+          var pph = cleanPhone(data.phone || "");
+          remoteProfiles[data.id] = { name: pn, avatar: pa, phone: pph };
           var pm = syncById(data.id);
           if (pm) {
             if (pn) { pm.name = pn; pm.real = pn; }
             pm.avatar = pa || null;
+            pm.phone = pph || null;
             renderMembers();
             if (currentMember && currentMember.id === pm.id && activeOverlay && activeOverlay.id === "ov-member") {
               $("#member-ava").innerHTML = avaInner(pm);
@@ -3503,6 +4200,25 @@
               $("#member-real").textContent = pm.real;
             }
           }
+        } else if (parts[2] === "chat") {
+          var cmText = cleanChatText(data.text);
+          if (!cmText || !data.name) return;
+          if (data.id === sync.identity) return;
+          chatLog.push({ self: false, name: cleanName(data.name), text: cmText, ts: data.ts || Date.now() });
+          if (chatLog.length > 50) chatLog = chatLog.slice(-50);
+          saveChat();
+          var cmOpen = activeOverlay && activeOverlay.id === "ov-chat";
+          if (cmOpen) {
+            renderChat();
+          } else {
+            chatUnread += 1;
+            updateChatBadge();
+          }
+          notifyMe("Mensaje de " + cleanName(data.name), cmText);
+        } else if (parts[2] === "rem") {
+          if (data.device === sync.device) return;
+          if (typeof data.ts !== "number" || data.ts < remSeenTs) return;
+          applyRemList(data.reminders, data.ts);
         } else if (parts[2] === "evt") {
           if (!data.kind || !data.place || !data.name) return;
           var bucket = Math.floor((data.ts || 0) / 60000);
@@ -3576,8 +4292,12 @@
         clearInterval(sync.countTimer);
         clearTimeout(sync.adoptTimer);
         sync.manualEnd = true;
+        if (pushEnabled()) clearPushSub();
         if (sync.client) {
-          try { sync.client.end(true); } catch (e) { /* ya cerrado */ }
+          var ending = sync.client;
+          setTimeout(function () {
+            try { ending.end(true); } catch (e) { /* ya cerrado */ }
+          }, 300);
         }
         sync.client = null;
         sync.manualEnd = false;
@@ -3632,6 +4352,8 @@
             c.subscribe(t.evt, { qos: 1 });
             c.subscribe(t.places, { qos: 1 });
             c.subscribe(t.profile + "/#", { qos: 1 });
+            c.subscribe(t.chat, { qos: 1 });
+            c.subscribe(t.rem, { qos: 1, retain: true });
           } catch (e) { /* sin conexión */ }
           setSyncState("on", "Posiciones y actividad en vivo con tu familia");
           publishPos();
@@ -3648,6 +4370,8 @@
           sync.adoptTimer = setTimeout(function () {
             if (sync.state !== "on") return;
             if (sync.placesTs > sync.maxSeenTs) publishPlaces();
+            if (remDirty) publishRem();
+            republishPush();
           }, 1500);
         });
 
@@ -4054,7 +4778,8 @@
           brak: d.brakes ? d.brakes + (d.brakes === 1 ? " frenada brusca" : " frenadas bruscas") : "Sin frenadas bruscas",
           path: trips.length % routePaths.length,
           fromLL: d.startLL,
-          toLL: d.lastLL
+          toLL: d.lastLL,
+          pathLL: (d.path && d.path.length > 1) ? d.path : null
         });
         saveTrips();
         renderTrips();
@@ -4073,6 +4798,7 @@
             startTs: ts,
             lastLL: [lat, lng],
             lastTs: ts,
+            path: [[lat, lng]],
             km: 0,
             maxKmh: spd,
             brakes: 0,
@@ -4089,6 +4815,10 @@
         }
         if (spd > drive.maxKmh) drive.maxKmh = spd;
         if (drive.lastSpeed - spd >= 15 && ts - drive.lastTs <= 3000) drive.brakes += 1;
+        if (drive.path.length < 2000) {
+          var lastPt = drive.path[drive.path.length - 1];
+          if (lastPt[0] !== lat || lastPt[1] !== lng) drive.path.push([lat, lng]);
+        }
         drive.lastLL = [lat, lng];
         drive.lastTs = ts;
         drive.lastSpeed = spd;
@@ -4193,6 +4923,169 @@
           });
       });
 
+      /* ===== Splash de arranque (1,2 s) ===== */
+      (function () {
+        var sp = document.getElementById("splash");
+        if (!sp) return;
+        setTimeout(function () {
+          sp.classList.add("out");
+          setTimeout(function () { if (sp.parentNode) sp.parentNode.removeChild(sp); }, 450);
+        }, 1200);
+      })();
+
+      /* ===== Modo conducción (persistido en nexo-driving) ===== */
+      function applyDriving(on) {
+        document.body.dataset.driving = on ? "on" : "off";
+        try { localStorage.setItem("nexo-driving", on ? "1" : "0"); } catch (e) { /* sin storage */ }
+        var sw = $("#driving-switch");
+        if (sw) sw.checked = !!on;
+      }
+      $("#driving-switch").addEventListener("change", function () {
+        applyDriving(this.checked);
+        toast(this.checked ? "Modo conducción activado: ocultos chat y avisos" : "Modo conducción desactivado");
+      });
+      applyDriving((function () {
+        try { return localStorage.getItem("nexo-driving") === "1"; } catch (e) { return false; }
+      })());
+
+      /* ===== Exportar datos (claves nexo-*) ===== */
+      $("#btn-export").addEventListener("click", function () {
+        var data = {};
+        try {
+          for (var i = 0; i < localStorage.length; i++) {
+            var k = localStorage.key(i);
+            if (k && k.indexOf("nexo-") === 0) data[k] = localStorage.getItem(k);
+          }
+        } catch (e) { toast("No se pudo leer el almacenamiento"); return; }
+        var payload = JSON.stringify({
+          app: "Mi Familia",
+          exportedAt: new Date().toISOString(),
+          data: data
+        }, null, 2);
+        function fallback() {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(payload).then(function () {
+              toast("Copia de datos en el portapapeles");
+            }, function () { toast("No se pudo copiar la copia de datos"); });
+          } else {
+            toast("Tu navegador no permite exportar aquí");
+          }
+        }
+        if (navigator.share && navigator.canShare) {
+          var file = null;
+          try { file = new File([payload], "mi-familia-datos.json", { type: "application/json" }); } catch (e) { file = null; }
+          if (file && navigator.canShare({ files: [file] })) {
+            navigator.share({ files: [file], title: "Datos de Mi Familia" }).then(function () {
+              toast("Datos compartidos");
+            }, function () { fallback(); });
+            return;
+          }
+        }
+        fallback();
+      });
+
+      /* ===== Web Push (VAPID; sub retenida <room>/push/sub/<identity>) ===== */
+      var VAPID_PUBLIC_KEY = "BCmvbtwyPgRWbU41zCS02ZQIuPWi_AHdRX66DI-XKNsZAcmrhyxXOxRpOUfZt9sg0KRu9sPg4yT5UNyH82F7YrY";
+
+      function b64ToUint8Array(b64) {
+        var pad = "=".repeat((4 - (b64.length % 4)) % 4);
+        var base64 = (b64 + pad).replace(/-/g, "+").replace(/_/g, "/");
+        var raw = atob(base64);
+        var out = new Uint8Array(raw.length);
+        for (var i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
+        return out;
+      }
+
+      function pushEnabled() {
+        try { return localStorage.getItem("nexo-push") === "1"; } catch (e) { return false; }
+      }
+
+      function setPushSwitch(on) {
+        var sw = $("#push-switch");
+        if (sw) sw.checked = !!on;
+      }
+
+      function publishPushSub(payload) {
+        if (sync.state !== "on" || !sync.client || !sync.identity) return;
+        try {
+          sync.client.publish(syncTopics().pushSub + "/" + sync.identity, payload, { qos: 1, retain: true });
+        } catch (e) { /* sin conexión */ }
+      }
+
+      function clearPushSub() {
+        publishPushSub("");
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.ready.then(function (reg) { return reg.pushManager.getSubscription(); })
+            .then(function (s) { if (s) s.unsubscribe(); })
+            .catch(function () { /* sin suscripción */ });
+        }
+      }
+
+      function enablePush() {
+        if (!sync.identity) return Promise.resolve(false);
+        if (!("serviceWorker" in navigator) || !("PushManager" in window) || typeof Notification === "undefined") {
+          toast("Este navegador no admite avisos push");
+          setPushSwitch(false);
+          return Promise.resolve(false);
+        }
+        var asked = Notification.permission === "granted" ? Promise.resolve("granted")
+          : (Notification.requestPermission ? Notification.requestPermission() : Promise.resolve("denied"));
+        return asked.then(function (p) {
+          if (p !== "granted") {
+            toast("Permiso de avisos denegado");
+            setPushSwitch(false);
+            return false;
+          }
+          return navigator.serviceWorker.ready.then(function (reg) {
+            return reg.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: b64ToUint8Array(VAPID_PUBLIC_KEY)
+            });
+          }).then(function (sub) {
+            try {
+              localStorage.setItem("nexo-push", "1");
+              localStorage.setItem("nexo-push-room", sync.room || "");
+            } catch (e) { /* sin storage */ }
+            publishPushSub(JSON.stringify({
+              v: 1,
+              ts: Date.now(),
+              endpoint: sub.endpoint,
+              keys: sub.toJSON().keys
+            }));
+            return true;
+          }).catch(function () {
+            toast("No se pudieron activar los avisos web");
+            setPushSwitch(false);
+            return false;
+          });
+        });
+      }
+
+      function republishPush() {
+        if (!pushEnabled() || !sync.identity) return;
+        var lastRoom = null;
+        try { lastRoom = localStorage.getItem("nexo-push-room"); } catch (e) { /* sin storage */ }
+        if (lastRoom && lastRoom !== sync.room) {
+          try {
+            sync.client.publish(SYNC_PREFIX + "/" + lastRoom + "/push/sub/" + sync.identity, "", { qos: 1, retain: true });
+          } catch (e) { /* sin conexión */ }
+        }
+        enablePush();
+      }
+
+      $("#push-switch").addEventListener("change", function () {
+        if (this.checked) {
+          enablePush().then(function (ok) {
+            if (ok) toast("Avisos web activados en este equipo");
+          });
+        } else {
+          clearPushSub();
+          try { localStorage.setItem("nexo-push", "0"); } catch (e) { /* sin storage */ }
+          toast("Avisos web desactivados");
+        }
+      });
+      setPushSwitch(pushEnabled());
+
       /* ===== Init ===== */
       try {
         if (localStorage.getItem("nexo-map-style") === "topo") {
@@ -4237,12 +5130,15 @@
         if (savedProfile && typeof savedProfile === "object") {
           profile.name = cleanName(savedProfile.name || "");
           profile.avatar = cleanAvatar(savedProfile.avatar || "");
+          profile.phone = cleanPhone(savedProfile.phone || "");
         }
       } catch (e) { /* sin storage */ }
       initRealMap();
       renderMembers();
       renderPlaces();
       renderTrips();
+      renderReminders();
+      scheduleRemLocal();
       initGps();
       initSync();
       applyProfileUi();
