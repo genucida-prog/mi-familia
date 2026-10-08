@@ -6,7 +6,7 @@
   <meta name="color-scheme" content="light dark" />
   <title>Mi Familia — localización familiar</title>
   <meta name="theme-color" content="#0E7A66" />
-  <meta name="app-version" content="1.3.1" />
+  <meta name="app-version" content="1.3.2" />
   <link rel="icon" type="image/svg+xml" href="icon.svg" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
@@ -1981,9 +1981,16 @@
                     <div class="row">
                       <div class="od-fill od-field">
                         <span class="row-title">Actualizar Mi Familia</span>
-                        <span class="row-help" id="update-status">Versión instalada: 1.3.1</span>
+                        <span class="row-help" id="update-status">Versión instalada: 1.3.2</span>
                       </div>
                       <button type="button" class="btn btn-ghost" id="btn-check-update" style="min-height:40px;font-size:14px">Comprobar</button>
+                    </div>
+                    <div class="row">
+                      <div class="od-fill od-field">
+                        <span class="row-title">Actualizar la APK</span>
+                        <span class="row-help" id="apk-update-status">Cómo quieres actualizar la app instalada</span>
+                      </div>
+                      <button type="button" class="btn btn-ghost" id="btn-apk-update" style="min-height:40px;font-size:14px">Comprobar</button>
                     </div>
                     <div class="row">
                       <div class="od-fill od-field">
@@ -3649,6 +3656,96 @@
         }
         $("#btn-check-update").addEventListener("click", function () { checkAppUpdate(true); });
         checkAppUpdate(false);
+      }
+
+      function cmpVers(a, b) {
+        a = String(a || "").replace(/^v/i, "").split(".");
+        b = String(b || "").replace(/^v/i, "").split(".");
+        for (var i = 0; i < Math.max(a.length, b.length); i++) {
+          var x = parseInt(a[i], 10) || 0;
+          var y = parseInt(b[i], 10) || 0;
+          if (x !== y) return x > y ? 1 : -1;
+        }
+        return 0;
+      }
+      function apkInstalledVersion() {
+        try {
+          if (window.NexoNative && NexoNative.apkVersion) {
+            var nv = NexoNative.apkVersion();
+            if (nv) return String(nv);
+          }
+        } catch (e) { /* sin puente */ }
+        var vm = document.querySelector('meta[name="app-version"]');
+        return vm ? (vm.getAttribute("content") || "") : "";
+      }
+      function checkApkUpdate(manual) {
+        var status = $("#apk-update-status");
+        var btn = $("#btn-apk-update");
+        if (!status || !btn) return;
+        var inApp = !!(window.NexoNative && NexoNative.apkUpdate);
+        var url = "https://api.github.com/repos/genucida-prog/mi-familia/releases/latest";
+        btn.disabled = true;
+        if (manual) status.textContent = "Comprobando…";
+        var last = parseInt(localStorage.getItem("nexo-apk-check-ts") || "0", 10);
+        if (!manual && last && Date.now() - last < 24 * 60 * 60 * 1000) {
+          btn.disabled = false;
+          return;
+        }
+        localStorage.setItem("nexo-apk-check-ts", String(Date.now()));
+        fetch(url, { cache: "no-store" })
+          .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+          .then(function (rel) {
+            btn.disabled = false;
+            var tag = rel && rel.tag_name ? rel.tag_name.replace(/^v/i, "") : "";
+            var cur = apkInstalledVersion();
+            if (!tag || !cur) {
+              if (manual) status.textContent = "No se encontró información de versión.";
+              return;
+            }
+            if (cmpVers(tag, cur) > 0) {
+              var assetUrl = "";
+              if (rel.assets) {
+                for (var i = 0; i < rel.assets.length; i++) {
+                  if (/\.apk$/i.test(rel.assets[i].name || "")) {
+                    assetUrl = rel.assets[i].browser_download_url || rel.assets[i].url || "";
+                    break;
+                  }
+                }
+              }
+              if (inApp && assetUrl) {
+                status.textContent = "APK v" + tag + " disponible";
+                btn.textContent = "Instalar";
+                btn.onclick = function () {
+                  btn.disabled = true;
+                  status.textContent = "Descargando e instalando…";
+                  try { NexoNative.apkUpdate(assetUrl); } catch (e) {
+                    status.textContent = "No se pudo iniciar la instalación.";
+                    btn.disabled = false;
+                  }
+                };
+              } else {
+                status.textContent = "APK v" + tag + " disponible";
+                btn.textContent = "Descargar";
+                btn.onclick = function () { window.open(rel.html_url || url, "_blank"); };
+              }
+            } else {
+              status.textContent = "La APK está al día (v" + cur + ")";
+              btn.textContent = "Comprobar";
+              btn.onclick = function () { checkApkUpdate(true); };
+            }
+          })
+          .catch(function () {
+            btn.disabled = false;
+            if (manual) status.textContent = "Sin conexión: no se pudo comprobar la APK.";
+          });
+      }
+      if ($("#btn-apk-update")) {
+        $("#btn-apk-update").onclick = function () { checkApkUpdate(true); };
+        if (window.NexoNative && NexoNative.apkUpdate) {
+          checkApkUpdate(false);
+        } else {
+          $("#apk-update-status").textContent = "Comprobar actualizaciones de la APK en GitHub";
+        }
       }
 
       $("#btn-pause").addEventListener("click", function () {

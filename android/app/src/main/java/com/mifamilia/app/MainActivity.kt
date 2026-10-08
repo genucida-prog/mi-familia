@@ -23,10 +23,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.webkit.WebResourceErrorCompat
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewClientCompat
 import org.json.JSONObject
+import java.io.File
+import java.io.FileOutputStream
+import java.net.HttpURLConnection
+import java.net.URL
 
 /** Screen to open when a notification is tapped: "chat" · "aviso" · "sos" · "super" · "recordatorio". */
 const val EXTRA_TARGET = "target"
@@ -355,6 +360,67 @@ class MainActivity : ComponentActivity() {
 
         @JavascriptInterface
         fun isServiceRunning(): Boolean = SyncService.active
+
+        @JavascriptInterface
+        fun apkVersion(): String = try {
+            packageManager.getPackageInfo(packageName, 0).versionName ?: ""
+        } catch (e: Exception) {
+            ""
+        }
+
+        /**
+         * Auto-update: downloads the newest APK from the GitHub release to the
+         * private cache and hands it to the system installer through a
+         * [FileProvider] content URI. Android still asks the user for a final
+         * confirmation tap (the OS owns installs); this removes the download
+         * and every other step.
+         */
+        @JavascriptInterface
+        fun apkUpdate(url: String) {
+            Thread {
+                var target: File? = null
+                try {
+                    val dir = File(cacheDir, "updates").apply { mkdirs() }
+                    val out = File(dir, "mi-familia.apk")
+                    val conn = URL(url).openConnection() as HttpURLConnection
+                    try {
+                        conn.connectTimeout = 20_000
+                        conn.readTimeout = 60_000
+                        conn.instanceFollowRedirects = true
+                        out.outputStream().use { os ->
+                            conn.inputStream.use { os.write(it.readBytes()) }
+                        }
+                    } finally {
+                        conn.disconnect()
+                    }
+                    target = out
+                } catch (e: Exception) {
+                    target = null
+                }
+                runOnUiThread {
+                    val file = target
+                    if (file == null) {
+                        Toast.makeText(this@MainActivity, R.string.apk_download_failed, Toast.LENGTH_SHORT).show()
+                        return@runOnUiThread
+                    }
+                    try {
+                        val uri = FileProvider.getUriForFile(
+                            this@MainActivity,
+                            "$packageName.fileprovider",
+                            file
+                        )
+                        startActivity(
+                            Intent(Intent.ACTION_VIEW).apply {
+                                setDataAndType(uri, "application/vnd.android.package-archive")
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                        )
+                    } catch (e: Exception) {
+                        Toast.makeText(this@MainActivity, R.string.no_app_for_link, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }.start()
+        }
 
         @JavascriptInterface
         fun configure(json: String) {

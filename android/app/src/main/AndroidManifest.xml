@@ -23,6 +23,8 @@
     <!-- Pasos de Health Connect en la pantalla Conducción. -->
     <uses-permission android:name="android.permission.health.READ_STEPS" />
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <!-- Auto-actualización de la APK: pedir al usuario que arranque el instalador. -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
         android:allowBackup="true"
@@ -57,6 +59,17 @@
         <receiver
             android:name=".ReminderReceiver"
             android:exported="false" />
+
+        <!-- Comparte la APK descargada con el instalador del sistema (auto-actualización). -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

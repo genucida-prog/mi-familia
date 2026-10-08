@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Mi Familia</string>
     <string name="no_app_for_link">No hay ninguna app para abrir el enlace</string>
+    <string name="apk_download_failed">No se pudo descargar la actualización</string>
 </resources>
