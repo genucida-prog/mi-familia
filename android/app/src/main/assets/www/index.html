@@ -6,7 +6,7 @@
   <meta name="color-scheme" content="light dark" />
   <title>Mi Familia — localización familiar</title>
   <meta name="theme-color" content="#0E7A66" />
-  <meta name="app-version" content="1.3.0" />
+  <meta name="app-version" content="1.3.1" />
   <link rel="icon" type="image/svg+xml" href="icon.svg" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
@@ -1981,7 +1981,7 @@
                     <div class="row">
                       <div class="od-fill od-field">
                         <span class="row-title">Actualizar Mi Familia</span>
-                        <span class="row-help" id="update-status">Versión instalada: 1.3.0</span>
+                        <span class="row-help" id="update-status">Versión instalada: 1.3.1</span>
                       </div>
                       <button type="button" class="btn btn-ghost" id="btn-check-update" style="min-height:40px;font-size:14px">Comprobar</button>
                     </div>
@@ -2643,6 +2643,25 @@
           lastFocus = null;
         }, 220);
       }
+
+      /* ===== Ruta de notificación (nativa y web push) =====
+         El APK llama a window.nexoOpen(target) al pulsar una notificación;
+         la web llega aquí vía ?target= en la URL abierta por sw.js. */
+      window.nexoOpen = function (target) {
+        try {
+          if (target === "chat") {
+            chatUnread = 0;
+            updateChatBadge();
+            renderChat();
+            openOverlay("ov-chat");
+            setTimeout(function () { $("#chat-input").focus(); }, 240);
+          } else if (target === "recordatorio") {
+            openOverlay("ov-remind");
+          } else {
+            setScreen("mapa");
+          }
+        } catch (e) { /* página aún a medias: se ignora */ }
+      };
 
       document.addEventListener("click", function (e) {
         var d = e.target.closest("[data-dismiss]");
@@ -5144,6 +5163,10 @@
       applyProfileUi();
       nativeSetConfig();
       setScreen("mapa");
+      var bootTarget = (location.search || "").match(/[?&]target=([^&]+)/);
+      if (bootTarget) {
+        setTimeout(function () { window.nexoOpen(decodeURIComponent(bootTarget[1])); }, 600);
+      }
     })();
   </script>
   <script>

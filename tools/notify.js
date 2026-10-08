@@ -22,7 +22,7 @@ if (!process.env.VAPID_PRIVATE_KEY) {
 webpush.setVapidDetails(SUBJECT, VAPID_PUBLIC_KEY, process.env.VAPID_PRIVATE_KEY);
 
 const subs = {}; // "sala|identity" -> { endpoint, keys }
-const events = []; // { room, from, title, body }
+const events = []; // { room, from, title, body, url }
 
 function onMessage(topic, payload) {
   const p = topic.split("/");
@@ -53,7 +53,7 @@ function onMessage(topic, payload) {
   if (p[2] === "chat") {
     const text = String(d.text || "").replace(/[<>]/g, "").trim().slice(0, 240);
     if (!text) return;
-    events.push({ room: p[1], from: from, title: "Mensaje de " + d.name, body: text });
+    events.push({ room: p[1], from: from, title: "Mensaje de " + d.name, body: text, url: "./?target=chat" });
     return;
   }
   if (d.kind === "super") {
@@ -81,7 +81,7 @@ async function deliver() {
       const sub = subs[key];
       sends.push(
         webpush
-          .sendNotification(sub, JSON.stringify({ title: ev.title, body: ev.body, url: "./" }))
+          .sendNotification(sub, JSON.stringify({ title: ev.title, body: ev.body, url: ev.url || "./" }))
           .catch(err => {
             const code = err && err.statusCode;
             if (code === 404 || code === 410) delete subs[key]; // suscripción caducada

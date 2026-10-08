@@ -13,8 +13,8 @@ android {
         // Health Connect (pasos) exige API 26; Android 8+ cubre casi todo el parque.
         minSdk = 26
         targetSdk = 34
-    versionCode = 4
-    versionName = "1.3"
+    versionCode = 5
+    versionName = "1.3.1"
     }
 
     buildTypes {

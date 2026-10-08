@@ -422,7 +422,7 @@ class SyncService : Service() {
         val key = "${data.optString("id")}|chat|$bucket"
         if (!seenEvt.add(key)) return
         if (seenEvt.size > 500) seenEvt.clear()
-        notifyUser("Mensaje de $from", text)
+        notifyUser("Mensaje de $from", text, "chat")
     }
 
     private fun handleRem(data: JSONObject) {
@@ -507,18 +507,18 @@ class SyncService : Service() {
             "super" -> {
                 val to = if (data.isNull("to")) "" else data.optString("to")
                 if (to.isNotEmpty() && to != identity) return
-                notifyUser("Superllamada de $from", "Abre Mi Familia para parar la alarma.")
+                notifyUser("Superllamada de $from", "Abre Mi Familia para parar la alarma.", "super")
                 if (superOn) ringSuper()
             }
             "sos" -> {
                 if (!notifSos) return
-                notifyUser("SOS de $from", "Su ubicación está en vivo en el mapa. Si es una emergencia real, avisa al 112.")
+                notifyUser("SOS de $from", "Su ubicación está en vivo en el mapa. Si es una emergencia real, avisa al 112.", "sos")
                 if (superOn) ringSuper()
             }
             "llegada", "salida" -> {
                 if (!notifLlegadas) return
                 val text = if (kind == "llegada") "$from llegó a $place" else "$from salió de $place"
-                notifyUser("Mi Familia", text)
+                notifyUser("Mi Familia", text, "aviso")
             }
         }
     }
@@ -576,7 +576,7 @@ class SyncService : Service() {
             if (!seenEvt.add("$id|$kind|$place|$bucket")) continue
             publishEvt(kind, place)
             if (notifLlegadas) {
-                notifyUser("Mi Familia", if (inside) "$name llegó a $place" else "$name salió de $place")
+                notifyUser("Mi Familia", if (inside) "$name llegó a $place" else "$name salió de $place", "aviso")
             }
         }
     }
@@ -601,6 +601,15 @@ class SyncService : Service() {
 
     // ===== Notifications =====
 
+    /** Screen target → fixed PendingIntent code, so taps open the right tab. */
+    private fun targetCode(target: String): Int = when (target) {
+        "chat" -> 10
+        "aviso" -> 11
+        "sos" -> 12
+        "super" -> 13
+        else -> 14
+    }
+
     private fun ensureChannels() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -615,14 +624,16 @@ class SyncService : Service() {
         )
     }
 
-    private fun notifyUser(title: String, body: String) {
+    private fun notifyUser(title: String, body: String, target: String) {
         if (Build.VERSION.SDK_INT >= 33 &&
             ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
         ) return
         ensureChannels()
         val open = PendingIntent.getActivity(
-            this, 0,
-            Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+            this, targetCode(target),
+            Intent(this, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .putExtra(EXTRA_TARGET, target),
             PendingIntent.FLAG_IMMUTABLE
         )
         val n = NotificationCompat.Builder(this, CH_AVISOS)
@@ -692,7 +703,9 @@ class SyncService : Service() {
         )
         val open = PendingIntent.getActivity(
             this, 2,
-            Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+            Intent(this, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .putExtra(EXTRA_TARGET, "super"),
             PendingIntent.FLAG_IMMUTABLE
         )
         return NotificationCompat.Builder(this, CH_ALARMA)

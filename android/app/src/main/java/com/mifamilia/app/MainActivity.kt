@@ -28,6 +28,9 @@ import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewClientCompat
 import org.json.JSONObject
 
+/** Screen to open when a notification is tapped: "chat" · "aviso" · "sos" · "super" · "recordatorio". */
+const val EXTRA_TARGET = "target"
+
 /**
  * Hosts Mi Familia in a WebView.
  *
@@ -51,6 +54,9 @@ class MainActivity : ComponentActivity() {
 
     private val prefs by lazy { getSharedPreferences("mifamilia_web", MODE_PRIVATE) }
 
+    /** "chat" · "aviso" · "sos" · "super" · "recordatorio": pantalla a abrir al llegar por notificación. */
+    private var pendingTarget: String? = null
+    private var pageLoaded = false
     private var exportRequested = false
     private var exportedData: String? = null
     private var mergeInjected = false
@@ -113,6 +119,8 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        pendingTarget = intent.getStringExtra(EXTRA_TARGET)
 
         val assetLoader = WebViewAssetLoader.Builder()
             .setDomain(ASSET_DOMAIN)
@@ -189,6 +197,8 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
+                pageLoaded = true
+                routePendingTarget()
             }
 
             override fun onReceivedError(
@@ -255,6 +265,32 @@ class MainActivity : ComponentActivity() {
         }
 
         webView.loadUrl(if (migrated()) REMOTE_URL else LOCAL_URL)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        pendingTarget = intent.getStringExtra(EXTRA_TARGET)
+        routePendingTarget()
+    }
+
+    /**
+     * A notification tap asks the page to open the screen that matches the
+     * event (chat, aviso, SOS, superllamada, recordatorio). The page exposes
+     * `window.nexoOpen(target)` for this; nothing happens if the page has not
+     * booted yet (the target stays pending until [onPageFinished]).
+     */
+    private fun routePendingTarget() {
+        val t = pendingTarget ?: return
+        if (!pageLoaded) return
+        pendingTarget = null
+        try {
+            webView.evaluateJavascript(
+                "window.nexoOpen && window.nexoOpen(${JSONObject.quote(t)})",
+                null
+            )
+        } catch (e: Exception) {
+            // WebView already gone: nothing to route.
+        }
     }
 
     override fun onPause() {

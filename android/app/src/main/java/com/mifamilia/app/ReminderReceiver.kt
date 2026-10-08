@@ -34,8 +34,10 @@ class ReminderReceiver : BroadcastReceiver() {
         }
         val from = intent.getStringExtra("from") ?: ""
         val open = PendingIntent.getActivity(
-            context, 0,
-            Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+            context, 20,
+            Intent(context, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .putExtra(EXTRA_TARGET, "recordatorio"),
             PendingIntent.FLAG_IMMUTABLE
         )
         val n = NotificationCompat.Builder(context, CH_REM)
