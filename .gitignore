@@ -1,0 +1,10 @@
+.file-versions/
+.od-frames/
+.od-skills/
+index.html.artifact.json
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+android/*.iml

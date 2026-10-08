@@ -1,0 +1,19 @@
+{
+  "name": "Mi Familia",
+  "short_name": "Mi Familia",
+  "description": "Localización familiar y avisos de llegada y salida en tiempo real",
+  "lang": "es-ES",
+  "dir": "ltr",
+  "id": "mi-familia",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5F8F7",
+  "theme_color": "#0E7A66",
+  "icons": [
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon-1024.png", "sizes": "1024x1024", "type": "image/png", "purpose": "any" }
+  ]
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  sRGB translations of the Mi Familia prototype tokens. Android resources
+  cannot express the page's custom properties, so these are the matching
+  opaque values:
+
+    bg          #F5F8F7   (var c-ground / phone-screen-bg)
+    surface_2   #EDF3F1   (var c-surface-alt)
+    accent      #0E7A66   (var c-primary)
+    accent_ink  #FFFFFF   (var c-on-primary)
+    fg          #12211E   (var c-ink)
+    muted       #4A5C57   (var c-ink-muted)
+-->
+<resources>
+    <color name="accent">#FF0E7A66</color>
+    <color name="accent_ink">#FFFFFFFF</color>
+    <color name="bg">#FFF5F8F7</color>
+    <color name="surface_2">#FFEDF3F1</color>
+    <color name="fg">#FF12211E</color>
+    <color name="muted">#FF4A5C57</color>
+    <color name="black">#FF000000</color>
+</resources>

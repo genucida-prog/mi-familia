@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Round legacy variant for API 24-25: circle badge with the pin and heart
+  from icon.svg, same 512 viewport geometry.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+    <path
+        android:fillColor="#0E7A66"
+        android:pathData="M0 256A256 256 0 1 1 512 256A256 256 0 1 1 0 256Z" />
+    <path
+        android:pathData="M256 400c0 0-104-106-104-176a104 104 0 0 1 208 0c0 70-104 176-104 176z"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="44"
+        android:strokeLineJoin="round" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M256 265.425l-7.975-7.26C219.7 232.48 201 215.54 201 194.75 201 177.81 214.31 164.5 231.25 164.5c9.57 0 18.755 4.455 24.75 11.495C261.995 168.955 271.18 164.5 280.75 164.5 297.69 164.5 311 177.81 311 194.75c0 20.79-18.7 37.73-47.025 63.47L256 265.425z" />
+</vector>

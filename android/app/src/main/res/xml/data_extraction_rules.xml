@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 12+ backup/transfer rules. Keep the same WebView localStorage
+  inclusion as backup_rules.xml so forecasts carry over.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <include
+            domain="file"
+            path="app_webview" />
+    </cloud-backup>
+    <device-transfer>
+        <include
+            domain="file"
+            path="app_webview" />
+    </device-transfer>
+</data-extraction-rules>

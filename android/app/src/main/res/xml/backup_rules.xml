@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The user's saved forecasts live in WebView's localStorage, which is stored
+  under the app's files directory in `app_webview`. Including it means
+  predictions survive a device-to-device restore.
+-->
+<full-backup-content>
+    <include
+        domain="file"
+        path="app_webview" />
+</full-backup-content>
